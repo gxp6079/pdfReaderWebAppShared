@@ -1,7 +1,8 @@
 package main.webapp;
 
 import main.webapp.Model.DataBaseConnection;
-import main.webapp.Routes.WebServer;
+import main.webapp.Routes.*;
+import spark.servlet.SparkApplication;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,7 +10,24 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
-public class Application {
+import static spark.Spark.get;
+import static spark.Spark.post;
+
+public class Application implements SparkApplication {
+
+    public static final String TEMPLATE_URL = "/PDFreader";
+
+    public static final String TABLE_INFO_URL = "/tableInfo";
+
+    public static final String START_END_URL = "/startEnd";
+
+    public static final String MULTIPLE_INSTANCE_URL = "/multi";
+
+    public static final String FINAL_INFO = "/finalInfo";
+
+    public static final String SIGN_IN = "/signIn";
+
+    public static final String EXIT = "/exit";
 
     private static final Logger LOG = Logger.getLogger(Application.class.getName());
 
@@ -17,12 +35,36 @@ public class Application {
 
         createDatabaseTable();
 
-        WebServer webServer = new WebServer();
-        webServer.init();
-
         LOG.config("Initialization Complete");
     }
 
+    @Override
+    public void destroy() {
+
+    }
+
+    @Override
+    public void init() {
+        get(FINAL_INFO, new getFinalInfoRoute());
+
+        get(MULTIPLE_INSTANCE_URL, new getMultipleInstancesRoute());
+
+        get(TABLE_INFO_URL, new getTableInfoRoute());
+
+        get(EXIT, new getUserExitRoute());
+
+        post(MULTIPLE_INSTANCE_URL, new postMultipleInstancesRoute());
+
+        post(START_END_URL, new postStartEndRoute());
+
+        post(TABLE_INFO_URL, new postTableInfoRoute());
+
+        post(TEMPLATE_URL, new postTemplateRoute());
+
+        post(SIGN_IN, new postSignInRoute());
+
+        LOG.finer("WebServer Initialized");
+    }
 
     public static void createDatabaseTable() {
         String databaseUrl = DataBaseConnection.DATABASE_IP;
