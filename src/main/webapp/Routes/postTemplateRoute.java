@@ -3,6 +3,9 @@ package main.webapp.Routes;
 import main.webapp.Model.TableFactory;
 import main.webapp.Model.Template;
 import main.webapp.Model.TemplateReader;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.CookieSpecs;
@@ -25,7 +28,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+
+import static spark.Spark.halt;
 
 
 /**
@@ -37,49 +44,62 @@ import java.util.logging.Logger;
  */
 public class postTemplateRoute implements Route {
     private static final Logger LOG = Logger.getLogger(postTemplateRoute.class.getName());
+    private FileHandler fh;
     private static final String API_KEY = "el9x8gb285ar";
     private static final String FORMAT = "csv";
 
     public postTemplateRoute() {
 
         LOG.finer("postTemplateRoute initialized");
+
+        try{
+            fh = new FileHandler("PostTamplateRouteLog.log");
+            LOG.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+            LOG.info("Created");
+        }
+        catch (Exception e){
+
+        }
+
     }
 
 
     private Path downloadFile(Request request) {
         try {
             request.raw().setAttribute("org.eclipse.jetty.multipartConfig",
-                    new MultipartConfigElement("/", 1000000000, 10000000, 1024));
+                    new MultipartConfigElement("/tmp")); // MultipartConfigElement("/", 1000000000, 10000000, 1024));
 
-            String filename;
 
-            try {
-                filename = request.raw().getPart("file").getSubmittedFileName();
-            } catch (Exception e) {
-                Path p = Paths.get(Paths.get("").toAbsolutePath().toString() + "/temp/" + "NewPDF.csv").toAbsolutePath();
-                return p;
+            final File upload = new File("upload");
+            if (!upload.exists() && !upload.mkdirs()) {
+                throw new RuntimeException("Failed to create directory " + upload.getAbsolutePath());
             }
 
-            if (!Files.exists(Paths.get(Paths.get("").toAbsolutePath() + "/temp/"))) {
-                Files.createDirectory(Paths.get(Paths.get("").toAbsolutePath() + "/temp/"));
-            }
+            // apache commons-fileupload to handle file upload
+            DiskFileItemFactory factory = new DiskFileItemFactory();
+            factory.setRepository(upload);
+            ServletFileUpload fileUpload = new ServletFileUpload(factory);
+            List<FileItem> items = fileUpload.parseRequest(request.raw());
 
-            Path p = Paths.get(Paths.get("").toAbsolutePath().toString() + "/temp/" + filename).toAbsolutePath();
+            // image is the field name that we want to save
+            FileItem item = items.stream()
+                    .filter(e -> "uploaded_file".equals(e.getFieldName()))
+                    .findFirst().get();
+            String fileName = item.getName();
+            item.write(new File(upload.getAbsolutePath(), fileName));
+            halt(200);
 
-            Part uploadedFile = request.raw().getPart("file");
+            Path p = Paths.get(upload.getAbsolutePath()).toAbsolutePath();
 
-            try (final InputStream in = uploadedFile.getInputStream()) {
-                Files.copy(in, p);
-            } catch (Exception e) {
-                p = Paths.get(Paths.get("").toAbsolutePath().toString() + "/temp/" + "NewPDF.csv").toAbsolutePath();
-                return p;
-            }
+            LOG.info("returned de path");
 
-            uploadedFile.delete();
             return p;
 
         } catch (Exception e) {
             Path p = Paths.get(Paths.get("").toAbsolutePath().toString() + "/temp/" + "NewPDF.csv").toAbsolutePath();
+            LOG.info(e.getMessage());
             return p;
         }
     }
@@ -97,6 +117,8 @@ public class postTemplateRoute implements Route {
         }
 
         convertToCSV(path.toAbsolutePath().toString());
+
+        LOG.info("Converted");
 
         request.session().attribute("path", path);
 
@@ -169,6 +191,7 @@ public class postTemplateRoute implements Route {
                 }
             }
         } catch (Exception e) {
+            LOG.info(e.toString());
             return false;
         }
     }

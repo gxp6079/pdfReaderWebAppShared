@@ -59,7 +59,7 @@ public class Application implements SparkApplication {
 
         post(TABLE_INFO_URL, new postTableInfoRoute());
 
-        post(TEMPLATE_URL, new postTemplateRoute());
+        post(TEMPLATE_URL, "multipart/form-data", new postTemplateRoute());
 
         post(SIGN_IN, new postSignInRoute());
 
