@@ -66,7 +66,7 @@ public class postTemplateRoute implements Route {
     }
 
 
-    private Path downloadFile(Request request) {
+    private String downloadFile(Request request) {
         try {
             request.raw().setAttribute("org.eclipse.jetty.multipartConfig",
                     new MultipartConfigElement("/tmp")); // MultipartConfigElement("/", 1000000000, 10000000, 1024));
@@ -89,18 +89,19 @@ public class postTemplateRoute implements Route {
                     .findFirst().get();
             String fileName = item.getName();
             item.write(new File(upload.getAbsolutePath(), fileName));
-            halt(200);
+
+            LOG.info("File created");
 
             Path p = Paths.get(upload.getAbsolutePath()).toAbsolutePath();
 
-            LOG.info("returned de path");
+            LOG.info("returned the path" + p.toString() +"/" +fileName);
 
-            return p;
+            return p.toString() + "/" +fileName;
 
         } catch (Exception e) {
             Path p = Paths.get(Paths.get("").toAbsolutePath().toString() + "/temp/" + "NewPDF.csv").toAbsolutePath();
             LOG.info(e.getMessage());
-            return p;
+            return p.toString() + "/NewPDF.csv";
         }
     }
 
@@ -110,13 +111,13 @@ public class postTemplateRoute implements Route {
         //String filename = request.queryParams("fileName");
         String templateType = request.queryParams("type");
 
-        Path path = downloadFile(request);
+        String path = downloadFile(request);
         if (path == null) {
             response.status(400);
             return "Error loading file from request body";
         }
 
-        convertToCSV(path.toAbsolutePath().toString());
+        convertToCSV(path);
 
         LOG.info("Converted");
 
@@ -126,7 +127,7 @@ public class postTemplateRoute implements Route {
 
         // Template fromDB = TemplateReader.readFromDB(templateType);
 
-        String csvFilePath = getOutputFilename(path.toAbsolutePath().toString(), "csv");
+        String csvFilePath = getOutputFilename(path, "csv");
 
         if (TemplateReader.checkIfExists(templateType)) {
             TemplateReader.readExistingTemplate(csvFilePath, templateType, out);
@@ -156,6 +157,8 @@ public class postTemplateRoute implements Route {
         RequestConfig globalConfig = RequestConfig.custom().setCookieSpec(CookieSpecs.STANDARD).build();
 
         File inputFile = new File(pdfFilename);
+
+        LOG.info("got file to make csv");
 
         if (!inputFile.canRead()) {
             System.out.println("Can't read input PDF file: \"" + pdfFilename + "\"");
