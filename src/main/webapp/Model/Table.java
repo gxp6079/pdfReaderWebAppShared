@@ -57,6 +57,12 @@ public class Table {
         table.add(new ArrayList<>(row));
     }
 
+
+    /***
+     * gets data in the column or row of a specified header
+     * @param header
+     * @return
+     */
     public List<String> getDataAt(String header) {
         boolean found = false;
         header = header.trim().toLowerCase();

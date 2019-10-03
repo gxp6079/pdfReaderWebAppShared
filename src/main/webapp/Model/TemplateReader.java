@@ -10,10 +10,17 @@ import java.util.*;
 
 public class TemplateReader {
 
+    /***
+     * checks if a template exists in the database
+     * @param templateName name of template to check
+     * @return true if exists false otherwise
+     * @throws SQLException thrown if cannot access database
+     */
     public static boolean checkIfExists(String templateName) throws SQLException {
         Connection connection = DataBaseConnection.makeConnection();
         return DataBaseConnection.checkIfObjExists(connection, templateName);
     }
+
 
     public static void readExistingTemplate(String filename, String templateName, ServletOutputStream out) throws IOException {
         Template template = null;
