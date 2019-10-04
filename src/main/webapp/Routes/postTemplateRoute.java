@@ -45,7 +45,7 @@ import static spark.Spark.halt;
 public class postTemplateRoute implements Route {
     private static final Logger LOG = Logger.getLogger(postTemplateRoute.class.getName());
     private FileHandler fh;
-    private static final String API_KEY = "el9x8gb285ar";
+    private static final String API_KEY = "d2ybto289sho";
     private static final String FORMAT = "csv";
 
     public postTemplateRoute() {
