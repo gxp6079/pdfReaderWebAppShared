@@ -74,7 +74,7 @@ public class TableFactory {
         int leftCol = 0;
         int row = 0;
         while(row < list.size()){
-            if(list.get(row)[leftCol].trim().toLowerCase().equals(start)){
+            if(list.get(row)[leftCol].trim().toLowerCase().contains(start)){
                 Integer[] loc = new Integer[2];
                 loc[0] = row;
                 loc[1] = leftCol;
@@ -96,7 +96,7 @@ public class TableFactory {
         try {
             while (row < list.size()) {
                 String val = list.get(row)[col].trim().toLowerCase();
-                if (val.equals(end)) return true;
+                if (val.contains(end)) return true;
                 if (col == list.get(row).length - 1) {
                     col = 0;
                     tableRow.clear();
