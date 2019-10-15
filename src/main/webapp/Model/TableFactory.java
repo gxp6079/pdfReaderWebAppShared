@@ -1,7 +1,10 @@
 package main.webapp.Model;
 
+import main.webapp.Routes.postStartEndRoute;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class TableFactory {
     /**
@@ -45,6 +48,8 @@ public class TableFactory {
     private String end;
 
     private List<Integer[]> locations;
+
+    private static final Logger LOG = Logger.getLogger(postStartEndRoute.class.getName());
 
 
     public TableFactory(List<String[]> list) {
@@ -147,7 +152,7 @@ public class TableFactory {
         this.row++;
         this.col = this.leftCol;
         String val = list.get(row)[col].trim().toLowerCase();
-        while(!val.equals(end)) {
+        while(!val.contains(end)) {
             val = list.get(row)[col].trim().toLowerCase();
             if (col >= leftCol) {
                 if(col == leftCol && !val.equals("")) finishedHead = true;
@@ -273,11 +278,13 @@ public class TableFactory {
 
 
     private void initializeHeaders(Table table) {
+        LOG.info("initialize header called");
         for (this.col = this.leftCol; this.col < list.get(this.row).length; this.col++) {
             String val = list.get(this.row)[this.col].trim().toLowerCase();
             if (!val.equals("")) {
                 Header header = new Header(this.row, this.col, val);
                 table.addHeader(header);
+                LOG.info("header added " + header.toString());
                 if (!val.contains("...")) this.tableRow.add(val);
                 dataIndexes.add(col);
             }
