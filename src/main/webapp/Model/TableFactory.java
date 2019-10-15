@@ -284,4 +284,7 @@ public class TableFactory {
         }
     }
 
+    public List<Integer[]> getLocations() {
+        return locations;
+    }
 }

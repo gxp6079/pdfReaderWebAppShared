@@ -61,8 +61,7 @@ public class postStartEndRoute implements Route {
             request.session().attribute("currentAttributes", tableAttributes);
 
             LOG.info("Redirecting to getMultipleInstance route");
-            response.redirect(WebServer.MULTIPLE_INSTANCE_URL + "?num=" + factory.getNumLocations());
-            return null;
+            return factory.getLocations() + " instances of start and end found, pick your location on PostMultipleInstancesRoute with /multi" ;
         }
 
 
