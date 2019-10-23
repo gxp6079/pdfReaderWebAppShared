@@ -7,6 +7,7 @@ import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class TemplateReader {
 
@@ -55,19 +56,28 @@ public class TemplateReader {
 
     }
 
-    public static HashMap<Integer, Table> getTables(Template template, TableFactory tableFactory, ServletOutputStream out) throws IOException {
+    public static HashMap<Integer, Table> getTables(Template template, TableFactory tableFactory, ServletOutputStream out, Logger LOG) throws IOException {
 
+        LOG.info("getTables() method called in TemplateReader");
         HashMap<Integer, Table> tables = new HashMap<>();
 
         for(TableAttributes attributes : template.getTables()){
+            LOG.info("looking for table with start, end: " + attributes.START + ", " + attributes.END);
             tableFactory.initialize(attributes.START, attributes.END);
             Table table = tableFactory.makeTable(attributes.getOccurrence());
+            LOG.info("Table found");
             tables.put(table.hashCode(), table);
         }
 
+        LOG.info("Printing tables");
         for(Integer id : tables.keySet()){
             out.println(id);
-            out.println(String.valueOf(tables.get(id)));
+            try {
+                out.println(String.valueOf(tables.get(id)));
+            } catch (Exception e) {
+                LOG.info("Error while printing table");
+                LOG.info(e.getMessage());
+            }
             out.println("\n");
         }
 

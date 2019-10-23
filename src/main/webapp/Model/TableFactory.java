@@ -4,7 +4,9 @@ import main.webapp.Routes.postStartEndRoute;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class TableFactory {
     /**
@@ -50,6 +52,8 @@ public class TableFactory {
     private List<Integer[]> locations;
 
     private static final Logger LOG = Logger.getLogger(postStartEndRoute.class.getName());
+    private FileHandler fh;
+
 
 
     public TableFactory(List<String[]> list) {
@@ -61,6 +65,18 @@ public class TableFactory {
 
         this.start = start = "";
         this.end = end = "";
+
+        try{
+            fh = new FileHandler("TableFactoryLog.log");
+            LOG.addHandler(fh);
+            SimpleFormatter formatter = new SimpleFormatter();
+            fh.setFormatter(formatter);
+            LOG.info("TableFactoryLogger created");
+        }
+        catch (Exception e){
+
+        }
+
     }
 
 
@@ -72,6 +88,8 @@ public class TableFactory {
         this.start = start.trim().toLowerCase();
         this.end = end.trim().toLowerCase();
         this.locations = getLocation(this.start, this.end);
+        LOG.info("Table factory initialized with start, end: " + start + ", " + end);
+        LOG.info("Number of locations found: " + locations.size());
     }
 
     public List<Integer[]> getLocation(String start, String end){
@@ -126,26 +144,33 @@ public class TableFactory {
 
 
     public Table makeTable(int location) {
+        LOG.info("Making table with start, end: " + start + ", " + end);
 
         boolean finishedHead = false;
 
         if(locations.size() != 1){
             if(locations.size() == 0){
+                LOG.info("Failed to make table, no locations found for start, end :"  + start + ", " + end);
                 System.out.println("Start not found");
                 return new Table(start, end);
             }
             else{
                 this.row = locations.get(location - 1)[0];
                 this.leftCol = locations.get(location - 1)[1];
+                LOG.info("Using location row, leftCol: " + this.row + ", " + this.leftCol);
             }
         }
         else{
             this.row = locations.get(0)[0];
             this.leftCol = locations.get(0)[1];
+            LOG.info("Only one possible location exists");
+            LOG.info("Using location row, leftCol: " + this.row + ", " + this.leftCol);
         }
         Table table = new Table(start, end);
+        LOG.info("Table object created with start, end: " + start + ", " + end);
 
         initializeHeaders(table);
+        LOG.info("Table initialized");
 
         tableRow.clear();
 
@@ -157,23 +182,34 @@ public class TableFactory {
             if (col >= leftCol) {
                 if(col == leftCol && !val.equals("")) finishedHead = true;
                 checkEntry(table, finishedHead);
-                if (!val.equals("")) tableRow.add(val);
-                else if (val.equals("") && dataIndexes.contains(col)) tableRow.add(val);
+                if (!val.equals("")) {
+                    tableRow.add(val);
+                    LOG.info("Adding '" + val + "' to table row");
+                }
+                else if (val.equals("") && dataIndexes.contains(col)) {
+                    tableRow.add(val);
+                    LOG.info("Adding '" + val + "' to table row");
+                }
             }
 
             if(col == list.get(row).length - 1) {
-                if(!list.get(row)[leftCol].equals("") && !tableRow.get(0).contains("...")) table.addRow(tableRow);
+                if(!list.get(row)[leftCol].equals("") && !tableRow.get(0).contains("...")) {
+                    table.addRow(tableRow);
+                    LOG.info("Adding row of size: " + tableRow.size());
+                }
                 col = 0;
                 tableRow.clear();
                 this.row++;
                 if (row >= list.size()) {
-                    System.out.println("End no found");
+                    System.out.println("End not found");
+                    LOG.info("End was not found, returning empty table");
                     return new Table(start, end);
                 }
             } else {
                 col++;
             }
         }
+        LOG.info("End of table found at row, col: " + row + ", " + col);
         return table;
     }
 
