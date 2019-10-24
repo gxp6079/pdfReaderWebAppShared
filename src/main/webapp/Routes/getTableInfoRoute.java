@@ -41,6 +41,8 @@ public class getTableInfoRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
+        response.raw().setContentType("text/html; charset=UTF-16");
+        response.raw().setCharacterEncoding("UTF-16");
         Template currentTemplate = request.session().attribute("template");
         LOG.info("Usign template: " + currentTemplate.getType());
 
@@ -48,7 +50,7 @@ public class getTableInfoRoute implements Route {
         LOG.info("Retrieved table factory from session");
 
         LOG.info("Reading tables with template reader");
-        HashMap<Integer, Table> tables = TemplateReader.getTables(currentTemplate, factory, response.raw().getOutputStream(), LOG);
+        HashMap<Integer, Table> tables = TemplateReader.getTables(currentTemplate, factory, response.raw().getWriter(), LOG);
 
         LOG.info("Adding tables to session");
         request.session().attribute("tables", tables);

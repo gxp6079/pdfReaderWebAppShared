@@ -56,7 +56,7 @@ public class TemplateReader {
 
     }
 
-    public static HashMap<Integer, Table> getTables(Template template, TableFactory tableFactory, ServletOutputStream out, Logger LOG) throws IOException {
+    public static HashMap<Integer, Table> getTables(Template template, TableFactory tableFactory, PrintWriter out, Logger LOG) throws IOException {
 
         LOG.info("getTables() method called in TemplateReader");
         HashMap<Integer, Table> tables = new HashMap<>();
