@@ -172,23 +172,23 @@ public class postTemplateRoute implements Route {
             HttpEntity requestBody = MultipartEntityBuilder.create().addPart("f", fileBody).build();
             httppost.setEntity(requestBody);
 
-            System.out.println("Sending request");
+            LOG.info("Sending request");
 
             try (CloseableHttpResponse response = httpclient.execute(httppost)) {
                 if (response.getStatusLine().getStatusCode() != 200) {
-                    System.out.println(response.getStatusLine());
+                    LOG.info(response.getStatusLine().toString());
                     System.exit(1);
                 }
                 HttpEntity resEntity = response.getEntity();
                 if (resEntity != null) {
                     final String outputFilename = getOutputFilename(pdfFilename, format.replaceFirst("-.*$", ""));
-                    System.out.println("Writing output to " + outputFilename);
+                    LOG.info("Writing output to " + outputFilename);
 
                     final File outputFile = new File(outputFilename);
                     FileUtils.copyToFile(resEntity.getContent(), outputFile);
                     return true;
                 } else {
-                    System.out.println("Error: file missing from response");
+                    LOG.info("Error: file missing from response");
                     return false;
                     // System.exit(1);
                 }

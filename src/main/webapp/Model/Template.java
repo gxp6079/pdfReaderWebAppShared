@@ -50,6 +50,15 @@ public class Template implements Serializable {
 
     public String getType(){return this.type;}
 
+    public boolean shouldSave(){
+        for (Field field : fields.values()){
+            if(field == null){
+                return false;
+            }
+        }
+        return  true;
+    }
+
     public void save() {
         String filename = this.type + ".ser";
         try {
