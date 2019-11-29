@@ -41,10 +41,13 @@ public class getTableInfoRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        response.raw().setContentType("text/html; charset=UTF-16");
-        response.raw().setCharacterEncoding("UTF-16");
+        String encoding = request.session().attribute("csvEncoding");
+        LOG.info("Using encoding: " + encoding);
+        response.raw().setContentType("text/html; charset="+encoding);
+        response.raw().setCharacterEncoding(encoding);
+
         Template currentTemplate = request.session().attribute("template");
-        LOG.info("Usign template: " + currentTemplate.getType());
+        LOG.info("Using template: " + currentTemplate.getType());
 
         TableFactory factory = request.session().attribute("factory");
         LOG.info("Retrieved table factory from session");

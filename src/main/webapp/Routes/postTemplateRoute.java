@@ -22,8 +22,7 @@ import spark.Route;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Part;
-import java.io.File;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -129,6 +128,9 @@ public class postTemplateRoute implements Route {
 
         String csvFilePath = getOutputFilename(path, "csv");
 
+        String encoding = loadEncoding(csvFilePath);
+        request.session().attribute("csvEncoding", encoding);
+
         if (TemplateReader.checkIfExists(templateType)) {
             TemplateReader.readExistingTemplate(csvFilePath, templateType, out);
             return 0;
@@ -142,6 +144,15 @@ public class postTemplateRoute implements Route {
         request.session().attribute("factory", new TableFactory(lines));
 
         return 1;
+    }
+
+
+    private static String loadEncoding(String csvPath) throws IOException {
+        File in =  new File(csvPath);
+        InputStreamReader r = new InputStreamReader(new FileInputStream(in));
+        String encoding = r.getEncoding();
+        r.close();
+        return encoding;
     }
 
 
