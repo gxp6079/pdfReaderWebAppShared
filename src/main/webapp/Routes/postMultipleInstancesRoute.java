@@ -1,6 +1,7 @@
 package main.webapp.Routes;
 
 import main.webapp.Model.TableAttributes;
+import main.webapp.Model.TableFactory;
 import main.webapp.Model.Template;
 import main.webapp.Model.TemplateReader;
 import spark.Request;
@@ -22,7 +23,19 @@ public class postMultipleInstancesRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
+        TableFactory factory = request.session().attribute("factory");
+        int totalLocations = factory.getNumLocations();
+        if (totalLocations < 2) {
+            response.status(300);
+            return "Only 1 location found";
+        }
+
         int instance = Integer.parseInt(request.queryParams("num"));
+
+        if (instance > totalLocations) {
+            response.status(301);
+            return "Too large instance input, no valid location";
+        }
 
         TableAttributes tableAttributes = request.session().attribute("currentAttributes");
 
