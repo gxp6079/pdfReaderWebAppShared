@@ -49,7 +49,7 @@ public class postTemplateRoute implements Route {
 
     public postTemplateRoute() {
         try{
-            fh = new FileHandler("PostTamplateRouteLog.log");
+            fh = new FileHandler("pdfReaderLogFiles/PostTamplateRouteLog.log");
             LOG.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);

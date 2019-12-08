@@ -27,7 +27,7 @@ public class getTableInfoRoute implements Route {
     public getTableInfoRoute() {
 
         try{
-            fh = new FileHandler("GetTableInfoRouteLog.log");
+            fh = new FileHandler("pdfReaderLogFiles/GetTableInfoRouteLog.log");
             LOG.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);

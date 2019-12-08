@@ -27,7 +27,7 @@ public class postTableInfoRoute implements Route {
     public postTableInfoRoute() {
 
         try{
-            fh = new FileHandler("PostTableInfoRouteLog.log");
+            fh = new FileHandler("pdfReaderLogFiles/PostTableInfoRouteLog.log");
             LOG.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);

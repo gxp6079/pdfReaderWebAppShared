@@ -116,7 +116,7 @@ public class Application implements SparkApplication {
 
     private void initLogs() {
         try{
-            start_end_fh = new FileHandler("PostStartEndRouteLog.log");
+            start_end_fh = new FileHandler("pdfReaderLogFiles/PostStartEndRouteLog.log");
             START_END_LOGGER.addHandler(start_end_fh);
             SimpleFormatter formatter = new SimpleFormatter();
             start_end_fh.setFormatter(formatter);
@@ -125,7 +125,7 @@ public class Application implements SparkApplication {
 
 
         try{
-            multiple_inst_fh = new FileHandler("PostMultipleInstance.log");
+            multiple_inst_fh = new FileHandler("pdfReaderLogFiles/PostMultipleInstance.log");
             MULTIPLE_LOG.addHandler(multiple_inst_fh);
             SimpleFormatter formatter = new SimpleFormatter();
             multiple_inst_fh.setFormatter(formatter);

@@ -21,7 +21,7 @@ public class getUserExitRoute implements Route {
 
     public getUserExitRoute() {
         try {
-            fh = new FileHandler("ExitRouteLog.log");
+            fh = new FileHandler("pdfReaderLogFiles/ExitRouteLog.log");
             LOG.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);

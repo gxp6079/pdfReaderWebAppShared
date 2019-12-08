@@ -22,7 +22,7 @@ public class getFinalInfoRoute implements Route {
     public getFinalInfoRoute() {
 
         try{
-            fh = new FileHandler("GetFinalInfoRouteLog.log");
+            fh = new FileHandler("pdfReaderLogFiles/GetFinalInfoRouteLog.log");
             LOG.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);
