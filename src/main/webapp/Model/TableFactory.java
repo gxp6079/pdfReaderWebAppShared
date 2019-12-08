@@ -177,6 +177,7 @@ public class TableFactory {
         this.row++;
         this.col = this.leftCol;
         String val = list.get(row)[col].trim().toLowerCase();
+        end = end.trim().toLowerCase();
         while(!val.contains(end)) {
             val = list.get(row)[col].trim().toLowerCase();
             if (col >= leftCol) {
