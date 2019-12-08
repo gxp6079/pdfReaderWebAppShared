@@ -65,6 +65,10 @@ public class getFinalInfoRoute implements Route {
 
         LOG.info("GetFinalInfo completed successfully");
 
+        try {
+            fh.close();
+        } catch (Exception e) {}
+
         return 1;
     }
 }

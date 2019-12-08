@@ -133,6 +133,9 @@ public class postTemplateRoute implements Route {
 
         if (TemplateReader.checkIfExists(templateType)) {
             TemplateReader.readExistingTemplate(csvFilePath, templateType, out);
+            try {
+                fh.close();
+            } catch (Exception e) {}
             return 0;
         }
 
@@ -143,6 +146,9 @@ public class postTemplateRoute implements Route {
 
         request.session().attribute("factory", new TableFactory(lines));
 
+        try {
+            fh.close();
+        } catch (Exception e) {}
         return 1;
     }
 

@@ -6,9 +6,12 @@ import spark.Route;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Logger;
 
 public class getUserExitRoute implements Route {
+    private static final Logger LOG = Logger.getLogger(postMultipleInstancesRoute.class.getName());
     public getUserExitRoute() {
+        LOG.finer("getUserExitRoute initialized");
     }
 
 

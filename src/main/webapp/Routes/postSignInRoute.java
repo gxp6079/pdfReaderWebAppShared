@@ -12,12 +12,11 @@ import java.util.logging.Logger;
  * can be used to validate a user's permission to use the API
  */
 public class postSignInRoute implements Route {
-    private static final Logger LOG = Logger.getLogger(postSignInRoute.class.getName());
+    //private static final Logger LOG = Logger.getLogger(postSignInRoute.class.getName());
 
 
     public postSignInRoute() {
 
-        LOG.config("postSignInRoute initialized");
     }
 
     @Override

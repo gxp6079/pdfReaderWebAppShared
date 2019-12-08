@@ -34,7 +34,7 @@ public class getTableInfoRoute implements Route {
             LOG.info("TableInfoRoute logger created");
         }
         catch (Exception e){
-
+            LOG.info("Failed to initialize logger");
         }
         LOG.finer("getTableInfoRoute initialized");
     }
@@ -58,6 +58,9 @@ public class getTableInfoRoute implements Route {
         LOG.info("Adding tables to session");
         request.session().attribute("tables", tables);
 
+        try {
+            fh.close();
+        } catch (Exception e) {}
         return 1;
     }
 }
