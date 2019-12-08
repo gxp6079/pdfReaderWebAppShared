@@ -20,7 +20,7 @@ public class getUserExitRoute implements Route {
 
     public getUserExitRoute() {
         try {
-            fh = new FileHandler("ExitRouteInitialized.log");
+            fh = new FileHandler("ExitRouteLog.log");
             LOG.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);
