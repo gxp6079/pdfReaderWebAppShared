@@ -13,14 +13,14 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class getUserExitRoute implements Route {
-    private static final Logger LOG = Logger.getLogger(postMultipleInstancesRoute.class.getName());
+    private static final Logger LOG = Logger.getLogger(getUserExitRoute.class.getName());
     private FileHandler fh;
 
 
 
     public getUserExitRoute() {
         try {
-            fh = new FileHandler("ExitRouteInitialized.log");
+            fh = new FileHandler("ExitRouteLog.log");
             LOG.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);
