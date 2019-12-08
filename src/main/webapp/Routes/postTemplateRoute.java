@@ -117,13 +117,14 @@ public class postTemplateRoute implements Route {
 
         LOG.info("Converted");
 
-        request.session().attribute("path", path);
-
         ServletOutputStream out = response.raw().getOutputStream();
 
         // Template fromDB = TemplateReader.readFromDB(templateType);
 
         String csvFilePath = getOutputFilename(path, "csv");
+
+        request.session().attribute("path", csvFilePath);
+        request.session().attribute("PDFPath", path);
 
         String encoding = loadEncoding(csvFilePath);
         request.session().attribute("csvEncoding", encoding);
