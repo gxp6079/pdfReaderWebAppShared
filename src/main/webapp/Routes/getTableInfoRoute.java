@@ -22,7 +22,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class getTableInfoRoute implements Route {
     private static final Logger LOG = Logger.getLogger(getTableInfoRoute.class.getName());
-    private FileHandler fh;
+    public static FileHandler fh;
 
     public getTableInfoRoute() {
 
@@ -58,10 +58,6 @@ public class getTableInfoRoute implements Route {
         LOG.info("Adding tables to session");
         request.session().attribute("tables", tables);
 
-        try {
-            fh.flush();
-            fh.close();
-        } catch (Exception e) {}
         return 1;
     }
 }

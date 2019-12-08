@@ -21,7 +21,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class postTableInfoRoute implements Route {
     private static final Logger LOG = Logger.getLogger(WebServer.class.getName());
-    private FileHandler fh;
+    public static FileHandler fh;
 
 
     public postTableInfoRoute() {
@@ -70,10 +70,6 @@ public class postTableInfoRoute implements Route {
 
         LOG.info("Field \'" + fieldName + "\': successfully added to template");
 
-        try {
-            fh.flush();
-            fh.close();
-        } catch (Exception e) {}
 
         return 1;
     }

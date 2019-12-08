@@ -16,7 +16,7 @@ import java.util.logging.SimpleFormatter;
  */
 public class getFinalInfoRoute implements Route {
     private static final Logger LOG = Logger.getLogger(getFinalInfoRoute.class.getName());
-    private FileHandler fh;
+    public static FileHandler fh;
 
 
     public getFinalInfoRoute() {
@@ -64,11 +64,6 @@ public class getFinalInfoRoute implements Route {
         }
 
         LOG.info("GetFinalInfo completed successfully");
-
-        try {
-            fh.flush();
-            fh.close();
-        } catch (Exception e) {}
 
         return 1;
     }

@@ -49,6 +49,26 @@ public class Application implements SparkApplication {
     @Override
     public void destroy() {
 
+        multiple_inst_fh.close();
+        LOG.info("Closed multiple instance route file handler");
+        start_end_fh.close();
+        LOG.info("Closed start end route file handler");
+        getFinalInfoRoute.fh.close();
+        LOG.info("Closed finalInfo route file handler");
+        getTableInfoRoute.fh.close();
+        LOG.info("Closed getTableInfoRoute route file handler");
+        getUserExitRoute.fh.close();
+        LOG.info("Closed getUserExitRoute route file handler");
+        postTableInfoRoute.fh.close();
+        LOG.info("Closed postTableInfoRoute route file handler");
+        postTemplateRoute.fh.close();
+        LOG.info("Closed postTemplateRoute route file handler");
+
+        LOG.info("Closed finalInfo route file handler");
+
+        LOG.info("Closed finalInfo route file handler");
+
+
     }
 
     @Override

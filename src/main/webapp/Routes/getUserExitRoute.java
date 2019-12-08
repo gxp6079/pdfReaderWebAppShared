@@ -14,7 +14,7 @@ import java.util.logging.SimpleFormatter;
 
 public class getUserExitRoute implements Route {
     private static final Logger LOG = Logger.getLogger(getUserExitRoute.class.getName());
-    private FileHandler fh;
+    public static FileHandler fh;
 
 
 
@@ -42,14 +42,6 @@ public class getUserExitRoute implements Route {
         request.session().invalidate();
 
         LOG.info("Session invalidated");
-
-
-        Application.multiple_inst_fh.close();
-        LOG.info("Closed multiple instance route file handler");
-        Application.start_end_fh.close();
-        LOG.info("Closed start end route file handler");
-
-        fh.close();
 
         return 1;
     }

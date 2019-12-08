@@ -20,7 +20,6 @@ public class getMultipleInstancesRoute implements Route {
 
     public getMultipleInstancesRoute() {
 
-        LOG.finer("getMultipleInstancesRoute initialized");
     }
 
     @Override
