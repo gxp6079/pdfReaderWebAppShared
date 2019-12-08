@@ -1,5 +1,6 @@
 package main.webapp.Routes;
 
+import main.webapp.Application;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -22,8 +23,8 @@ public class getUserExitRoute implements Route {
 
         request.session().invalidate();
 
-        WebServer.multiple_inst_fh.close();
-        WebServer.start_end_fh.close();
+        Application.multiple_inst_fh.close();
+        Application.start_end_fh.close();
 
         return 1;
     }
