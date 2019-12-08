@@ -22,6 +22,9 @@ public class getUserExitRoute implements Route {
 
         request.session().invalidate();
 
+        WebServer.multiple_inst_fh.close();
+        WebServer.start_end_fh.close();
+
         return 1;
     }
 }

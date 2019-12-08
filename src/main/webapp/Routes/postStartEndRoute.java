@@ -18,19 +18,11 @@ import java.util.logging.SimpleFormatter;
  * each call contains one start and one end key
  */
 public class postStartEndRoute implements Route {
-    private static final Logger LOG = Logger.getLogger(postStartEndRoute.class.getName());
-    private FileHandler fh;
+    private Logger LOG;
 
-    public postStartEndRoute() {
-        try{
-            fh = new FileHandler("PostStartEndRouteLog.log");
-            LOG.addHandler(fh);
-            SimpleFormatter formatter = new SimpleFormatter();
-            fh.setFormatter(formatter);
-            LOG.info("Created");
-        } catch (Exception e) {
+    public postStartEndRoute(Logger LOG) {
+        this.LOG = LOG;
 
-        }
         LOG.finer("postStartEndRoute initialized");
     }
 

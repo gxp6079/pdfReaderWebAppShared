@@ -15,9 +15,11 @@ import java.util.logging.Logger;
  * called to specify which instance of start/end the user wants to use
  */
 public class postMultipleInstancesRoute implements Route {
-    private static final Logger LOG = Logger.getLogger(postMultipleInstancesRoute.class.getName());
+    private static Logger LOG;
 
-    public postMultipleInstancesRoute() {
+    public postMultipleInstancesRoute(Logger LOG) {
+        this.LOG = LOG;
+
         LOG.finer("postMultipleInstancesRoute initialized");
     }
 
