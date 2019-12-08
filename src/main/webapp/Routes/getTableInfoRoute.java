@@ -36,7 +36,7 @@ public class getTableInfoRoute implements Route {
         catch (Exception e){
             LOG.info("Failed to initialize logger");
         }
-        LOG.finer("getTableInfoRoute initialized");
+        LOG.info("getTableInfoRoute initialized");
     }
 
     @Override
@@ -59,6 +59,7 @@ public class getTableInfoRoute implements Route {
         request.session().attribute("tables", tables);
 
         try {
+            fh.flush();
             fh.close();
         } catch (Exception e) {}
         return 1;

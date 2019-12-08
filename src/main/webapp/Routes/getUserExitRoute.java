@@ -35,7 +35,7 @@ public class getUserExitRoute implements Route {
 
         LOG.info("Getting path for Csv file");
         Path path = request.session().attribute("path");
-        Files.delete(path);
+        Files.deleteIfExists(path);
 
         LOG.info("CSV deleted");
 

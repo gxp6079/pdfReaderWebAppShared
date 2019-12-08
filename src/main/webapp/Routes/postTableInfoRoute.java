@@ -71,6 +71,7 @@ public class postTableInfoRoute implements Route {
         LOG.info("Field \'" + fieldName + "\': successfully added to template");
 
         try {
+            fh.flush();
             fh.close();
         } catch (Exception e) {}
 

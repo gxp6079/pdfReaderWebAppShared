@@ -23,7 +23,7 @@ public class postStartEndRoute implements Route {
     public postStartEndRoute(Logger LOG) {
         this.LOG = LOG;
 
-        LOG.finer("postStartEndRoute initialized");
+        LOG.info("postStartEndRoute initialized");
     }
 
     @Override

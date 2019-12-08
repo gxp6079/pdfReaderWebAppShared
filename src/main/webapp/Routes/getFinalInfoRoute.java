@@ -66,6 +66,7 @@ public class getFinalInfoRoute implements Route {
         LOG.info("GetFinalInfo completed successfully");
 
         try {
+            fh.flush();
             fh.close();
         } catch (Exception e) {}
 

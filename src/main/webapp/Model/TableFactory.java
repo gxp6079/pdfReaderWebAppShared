@@ -201,9 +201,9 @@ public class TableFactory {
                 col = 0;
                 tableRow.clear();
                 this.row++;
-                if (row >= list.size()) {
+                if (row >= list.size() && !val.contains(end)) {
                     System.out.println("End not found");
-                    LOG.info("End was not found, returning empty table");
+                    LOG.info("End" + this.end+" was not found, returning empty table");
                     return new Table(start, end);
                 }
             } else {

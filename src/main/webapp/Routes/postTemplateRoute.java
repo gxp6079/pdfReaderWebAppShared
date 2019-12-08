@@ -48,9 +48,6 @@ public class postTemplateRoute implements Route {
     private static final String FORMAT = "csv";
 
     public postTemplateRoute() {
-
-        LOG.finer("postTemplateRoute initialized");
-
         try{
             fh = new FileHandler("PostTamplateRouteLog.log");
             LOG.addHandler(fh);
@@ -61,8 +58,7 @@ public class postTemplateRoute implements Route {
         catch (Exception e){
 
         }
-        LOG.info("Successfully initialized PostTemplateRoute");
-
+        LOG.info("postTemplateRoute initialized");
     }
 
 
@@ -135,6 +131,7 @@ public class postTemplateRoute implements Route {
         if (TemplateReader.checkIfExists(templateType)) {
             TemplateReader.readExistingTemplate(csvFilePath, templateType, out);
             try {
+                fh.flush();
                 fh.close();
             } catch (Exception e) {}
             return 0;
@@ -148,6 +145,7 @@ public class postTemplateRoute implements Route {
         request.session().attribute("factory", new TableFactory(lines));
 
         try {
+            fh.flush();
             fh.close();
         } catch (Exception e) {}
         return 1;
