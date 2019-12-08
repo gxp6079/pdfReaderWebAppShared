@@ -61,6 +61,7 @@ public class postTemplateRoute implements Route {
         catch (Exception e){
 
         }
+        LOG.info("Successfully initialized PostTemplateRoute");
 
     }
 
