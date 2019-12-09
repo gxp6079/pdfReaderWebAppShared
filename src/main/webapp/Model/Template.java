@@ -19,10 +19,10 @@ public class Template implements Serializable {
         this.tables = new ArrayList<>();
         this.fields = new HashMap<>();
         this.type = type;
-        fields.put("Data", null);
-        fields.put("Conta", null);
-        fields.put("Descricao", null);
-        fields.put("Valor Bruto", null);
+        fields.put("data", null);
+        fields.put("conta", null);
+        fields.put("descricao", null);
+        fields.put("valor bruto", null);
     }
 
     public void setType(String type) {
