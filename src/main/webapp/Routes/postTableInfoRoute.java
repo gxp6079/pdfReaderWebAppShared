@@ -45,7 +45,7 @@ public class postTableInfoRoute implements Route {
 
         TableFactory factory = request.session().attribute("factory");
 
-        String fieldName = request.queryParams("field");
+        String fieldName = request.queryParams("field").trim().toLowerCase();
         String value = request.queryParams("value");
         int id = Integer.parseInt(request.queryParams("id"));
 
