@@ -23,7 +23,7 @@ public class TemplateReader {
     }
 
 
-    public static void readExistingTemplate(String filename, String templateName, ServletOutputStream out) throws IOException {
+    public static void readExistingTemplate(String filename, String templateName, PrintWriter out) throws IOException {
         Template template = null;
         try {
             template = readFromDB(templateName);

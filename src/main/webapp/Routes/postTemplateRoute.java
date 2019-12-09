@@ -117,7 +117,10 @@ public class postTemplateRoute implements Route {
 
         LOG.info("Converted");
 
-        ServletOutputStream out = response.raw().getOutputStream();
+        String encoding = request.session().attribute("csvEncoding");
+        LOG.info("Using encoding: " + encoding);
+        response.raw().setContentType("text/html; charset="+encoding);
+        response.raw().setCharacterEncoding(encoding);
 
         // Template fromDB = TemplateReader.readFromDB(templateType);
 
@@ -126,11 +129,13 @@ public class postTemplateRoute implements Route {
         request.session().attribute("path", csvFilePath);
         request.session().attribute("PDFPath", path);
 
-        String encoding = loadEncoding(csvFilePath);
-        request.session().attribute("csvEncoding", encoding);
-
         if (TemplateReader.checkIfExists(templateType)) {
-            TemplateReader.readExistingTemplate(csvFilePath, templateType, out);
+            try {
+                TemplateReader.readExistingTemplate(csvFilePath, templateType, response.raw().getWriter());
+            }
+            catch (Exception e){
+                LOG.info("Error reading existing template:" +  e.getMessage());
+            }
             return 0;
         }
 

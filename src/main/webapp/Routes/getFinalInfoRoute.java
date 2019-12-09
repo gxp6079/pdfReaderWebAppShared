@@ -55,15 +55,21 @@ public class getFinalInfoRoute implements Route {
         }
 
         try {
+            String encoding = request.session().attribute("csvEncoding");
+            LOG.info("Using encoding: " + encoding);
+            response.raw().setContentType("text/html; charset="+encoding);
+            response.raw().setCharacterEncoding(encoding);
+
             LOG.info("Reading data from template: " + currentTemplate.getType());
             TemplateReader.readExistingTemplate(request.session().attribute("path").toString(),
                     currentTemplate.getType(),
-                    response.raw().getOutputStream());
+                    response.raw().getWriter());
         } catch (Exception e) {
-            LOG.info("Exception thrown when reading template");
+            LOG.info("Exception thrown when reading template" + e.getMessage());
         }
 
         LOG.info("GetFinalInfo completed successfully");
+        fh.flush();
 
         return 1;
     }
