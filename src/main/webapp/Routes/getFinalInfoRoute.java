@@ -41,7 +41,7 @@ public class getFinalInfoRoute implements Route {
 
         LOG.info("Checking if exists template type: " + currentTemplate.getType());
         try {
-            if (!TemplateReader.checkIfExists(currentTemplate.getType()) && currentTemplate.shouldSave()) {
+            if (!TemplateReader.checkIfExists(currentTemplate.getType()) && currentTemplate.shouldSave(LOG)) {
                 TemplateReader.addToDB(currentTemplate);
                 LOG.info("Adding template \'" + currentTemplate.getType() + "\' to database");
             } else if(TemplateReader.checkIfExists(currentTemplate.getType())) {

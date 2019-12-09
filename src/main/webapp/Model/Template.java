@@ -4,6 +4,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.*;
 import java.sql.Connection;
+import java.util.logging.Logger;
 
 public class Template implements Serializable {
     private List<TableAttributes> tables;
@@ -50,7 +51,10 @@ public class Template implements Serializable {
 
     public String getType(){return this.type;}
 
-    public boolean shouldSave(){
+    public boolean shouldSave(Logger LOG){
+
+        LOG.info(fields.toString());
+
         for (Field field : fields.values()){
             if(field == null){
                 return false;
