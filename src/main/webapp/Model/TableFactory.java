@@ -52,7 +52,7 @@ public class TableFactory {
     private List<Integer[]> locations;
 
     private static final Logger LOG = Logger.getLogger(postStartEndRoute.class.getName());
-    private FileHandler fh;
+    public static FileHandler fh;
 
 
 
@@ -67,7 +67,7 @@ public class TableFactory {
         this.end = end = "";
 
         try{
-            fh = new FileHandler("TableFactoryLog.log");
+            fh = new FileHandler("pdfReaderLogFiles/TableFactoryLog.log");
             LOG.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);

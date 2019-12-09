@@ -1,6 +1,7 @@
 package main.webapp;
 
 import main.webapp.Model.DataBaseConnection;
+import main.webapp.Model.TableFactory;
 import main.webapp.Routes.*;
 import spark.servlet.SparkApplication;
 
@@ -63,10 +64,8 @@ public class Application implements SparkApplication {
         LOG.info("Closed postTableInfoRoute route file handler");
         postTemplateRoute.fh.close();
         LOG.info("Closed postTemplateRoute route file handler");
-
-        LOG.info("Closed finalInfo route file handler");
-
-        LOG.info("Closed finalInfo route file handler");
+        TableFactory.fh.close();
+        LOG.info("Closed TableFactory file handler");
 
 
     }
