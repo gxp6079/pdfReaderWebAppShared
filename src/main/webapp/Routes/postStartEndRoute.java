@@ -41,7 +41,7 @@ public class postStartEndRoute implements Route {
         factory.initialize(start, end);
 
         if (factory.getNumLocations() == 0) {
-            LOG.info("ERROR: start or end was not found in the table");
+            LOG.info("ERROR: start or end was not found in the table.");
             //start or end not found
             response.status(400);
             return "Start or end not found";
