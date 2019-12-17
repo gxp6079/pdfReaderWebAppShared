@@ -30,6 +30,7 @@ public class postStartEndRoute implements Route {
     public Object handle(Request request, Response response) throws Exception {
         String start = request.queryParams("start");
         String end = request.queryParams("end");
+        Boolean contains = Boolean.valueOf(request.queryParams("use_contains"));
 
         LOG.info("Start, end: " + start + ", " + end);
 
@@ -38,7 +39,7 @@ public class postStartEndRoute implements Route {
 
         TableFactory factory = request.session().attribute("factory");
         LOG.info("Initializing the start and end in the factory");
-        factory.initialize(start, end);
+        factory.initialize(start, end, contains);
 
         if (factory.getNumLocations() == 0) {
             LOG.info("ERROR: start or end was not found in the table");
