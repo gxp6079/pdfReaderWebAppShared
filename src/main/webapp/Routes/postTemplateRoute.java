@@ -43,8 +43,8 @@ import static spark.Spark.halt;
  */
 public class postTemplateRoute implements Route {
     private static final Logger LOG = Logger.getLogger(postTemplateRoute.class.getName());
-    private FileHandler fh;
-    private static final String API_KEY = "b45tfxs4pqp5";
+    public static FileHandler fh;
+    private static final String API_KEY = "bbdro1wrndmx";
     private static final String FORMAT = "csv";
 
     public postTemplateRoute() {
@@ -105,6 +105,7 @@ public class postTemplateRoute implements Route {
     @Override
     public Object handle(Request request, Response response) throws Exception {
         //String filename = request.queryParams("fileName");
+        request.session().attribute("template", new Template());
         String templateType = request.queryParams("type");
 
         String path = downloadFile(request);
@@ -117,27 +118,33 @@ public class postTemplateRoute implements Route {
 
         LOG.info("Converted");
 
-        String encoding = request.session().attribute("csvEncoding");
-        LOG.info("Using encoding: " + encoding);
-        response.raw().setContentType("text/html; charset="+encoding);
+        String encoding = "UTF-8";
+        response.raw().setContentType("text/html; charset=" + encoding);
         response.raw().setCharacterEncoding(encoding);
+
 
         // Template fromDB = TemplateReader.readFromDB(templateType);
 
         String csvFilePath = getOutputFilename(path, "csv");
 
+        LOG.info("setting new path");
         request.session().attribute("path", csvFilePath);
+        LOG.info("new path set");
+        LOG.info("setting new pdf path");
         request.session().attribute("PDFPath", path);
+        LOG.info("new PDF path set");
 
         if (TemplateReader.checkIfExists(templateType)) {
+            LOG.info("template exists");
             try {
                 TemplateReader.readExistingTemplate(csvFilePath, templateType, response.raw().getWriter());
             }
             catch (Exception e){
                 LOG.info("Error reading existing template:" +  e.getMessage());
             }
-            return 0;
+            return 1;
         }
+
 
         Template currentTemplate = request.session().attribute("template");
         currentTemplate.setType(templateType);

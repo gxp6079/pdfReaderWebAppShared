@@ -41,7 +41,7 @@ public class getTableInfoRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        String encoding = request.session().attribute("csvEncoding");
+        String encoding = "UTF-8";
         LOG.info("Using encoding: " + encoding);
         response.raw().setContentType("text/html; charset="+encoding);
         response.raw().setCharacterEncoding(encoding);

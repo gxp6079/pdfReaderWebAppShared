@@ -22,9 +22,6 @@ public class postSignInRoute implements Route {
     @Override
     public Object handle(Request request, Response response) throws Exception {
         String apiKey = request.queryParams("key");
-
-        request.session().attribute("template", new Template());
-
         // TODO check if key exists in something (file, map, etc.)
 
 

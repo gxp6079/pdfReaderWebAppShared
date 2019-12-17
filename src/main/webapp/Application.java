@@ -114,6 +114,8 @@ public class Application implements SparkApplication {
     }
 
     private void initLogs() {
+
+
         try{
             start_end_fh = new FileHandler("pdfReaderLogFiles/PostStartEndRouteLog.log");
             START_END_LOGGER.addHandler(start_end_fh);
