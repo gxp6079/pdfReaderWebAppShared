@@ -59,8 +59,6 @@ public class postStartEndRoute implements Route {
                         + factory.getLocations().get(index)[1] + "\n";
                 index++;
             }
-
-            LOG.info("Redirecting to getMultipleInstance route");
             return message;
         }
 
