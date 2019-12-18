@@ -178,37 +178,41 @@ public class TableFactory {
         this.col = this.leftCol;
         String val = list.get(row)[col].trim().toLowerCase();
         end = end.trim().toLowerCase();
-        while(!val.contains(end)) {
-            val = list.get(row)[col].trim().toLowerCase();
-            if (col >= leftCol) {
-                if(col == leftCol && !val.equals("")) finishedHead = true;
-                checkEntry(table, finishedHead);
-                if (!val.equals("")) {
-                    tableRow.add(val);
-                    LOG.info("Adding '" + val + "' to table row");
+        try {
+            while (!val.contains(end)) {
+                val = list.get(row)[col].trim().toLowerCase();
+                if (col >= leftCol) {
+                    if (col == leftCol && !val.equals("")) finishedHead = true;
+                    checkEntry(table, finishedHead);
+                    if (!val.equals("")) {
+                        tableRow.add(val);
+                        LOG.info("Adding '" + val + "' to table row");
+                    } else if (val.equals("") && dataIndexes.contains(col)) {
+                        tableRow.add(val);
+                        LOG.info("Adding '" + val + "' to table row");
+                    }
                 }
-                else if (val.equals("") && dataIndexes.contains(col)) {
-                    tableRow.add(val);
-                    LOG.info("Adding '" + val + "' to table row");
-                }
-            }
 
-            if(col == list.get(row).length - 1) {
-                if(!list.get(row)[leftCol].equals("") && !tableRow.get(0).contains("...")) {
-                    table.addRow(tableRow);
-                    LOG.info("Adding row of size: " + tableRow.size());
+                if (col == list.get(row).length - 1) {
+                    if ((list.get(row).length > leftCol && !list.get(row)[leftCol].equals("")) && !tableRow.get(0).contains("...")) {
+                        table.addRow(tableRow);
+                        LOG.info("Adding row of size: " + tableRow.size());
+                    }
+                    col = 0;
+                    tableRow.clear();
+                    this.row++;
+                    if (row >= list.size() && !val.contains(end)) {
+                        System.out.println("End not found");
+                        LOG.info("End" + this.end + " was not found, returning empty table");
+                        return new Table(start, end);
+                    }
+                } else {
+                    col++;
                 }
-                col = 0;
-                tableRow.clear();
-                this.row++;
-                if (row >= list.size() && !val.contains(end)) {
-                    System.out.println("End not found");
-                    LOG.info("End" + this.end+" was not found, returning empty table");
-                    return new Table(start, end);
-                }
-            } else {
-                col++;
             }
+        }
+        catch (Exception e){
+            LOG.info(e.getMessage());
         }
         LOG.info("End of table found at row, col: " + row + ", " + col);
         return table;
