@@ -30,7 +30,12 @@ public class postStartEndRoute implements Route {
     public Object handle(Request request, Response response) throws Exception {
         String start = request.queryParams("start");
         String end = request.queryParams("end");
-        Boolean contains = Boolean.valueOf(request.queryParams("use_contains"));
+        Boolean contains = true;
+        try {
+            contains = Boolean.valueOf(request.queryParams("use_contains"));
+        } catch (Exception e) {
+            LOG.info(e.getMessage());
+        }
 
         LOG.info("Start, end: " + start + ", " + end);
 
