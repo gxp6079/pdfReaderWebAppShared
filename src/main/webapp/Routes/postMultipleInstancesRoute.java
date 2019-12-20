@@ -1,5 +1,6 @@
 package main.webapp.Routes;
 
+import main.webapp.Application;
 import main.webapp.Model.*;
 import spark.Request;
 import spark.Response;
@@ -24,7 +25,11 @@ public class postMultipleInstancesRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        TableFactory factory = request.session().attribute("factory");
+        String id = request.queryParams("token");
+        Token token = Application.getToken(id, request);
+
+
+        TableFactory factory = token.getTableFactory();
         int totalLocations = factory.getNumLocations();
         if (totalLocations < 2) {
             response.status(300);
@@ -39,18 +44,18 @@ public class postMultipleInstancesRoute implements Route {
         }
 
         Map<Integer, Table> tables;
-        if (!request.session().attributes().contains("tables")) {
+        if (token.getTables() == null) {
             tables = new HashMap<>();
-            request.session().attribute("tables", tables);
+            token.setTables(tables);
             LOG.info("Creating and adding table hashmap to session");
         } else {
-            tables = request.session().attribute("tables");
+            tables = token.getTables();
             LOG.info("Loading table hashmap from session");
         }
 
-        TableAttributes tableAttributes = request.session().attribute("currentAttributes");
+        TableAttributes tableAttributes = token.getTableAttributes();
 
-        Template currentTemplate = request.session().attribute("template");
+        Template currentTemplate = token.getTemplate();
 
         LOG.info("Making table based on the" + instance+ " instance of start end locations");
         Table curr = factory.makeTable(instance);
@@ -60,7 +65,7 @@ public class postMultipleInstancesRoute implements Route {
 
         TemplateReader.createTable(currentTemplate, tableAttributes.START, tableAttributes.END, instance);
 
-        request.session().removeAttribute("currentAttributes");
+        token.setTableAttributes(null);
         return 1;
     }
 }

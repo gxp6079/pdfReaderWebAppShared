@@ -1,5 +1,6 @@
 package main.webapp.Routes;
 
+import main.webapp.Application;
 import main.webapp.Model.*;
 import spark.Request;
 import spark.Response;
@@ -28,6 +29,11 @@ public class postStartEndRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
+
+        String id = request.queryParams("token");
+        Token token = Application.getToken(id, request);
+
+
         String start = request.queryParams("start");
         String end = request.queryParams("end");
         Boolean contains = true;
@@ -39,10 +45,10 @@ public class postStartEndRoute implements Route {
 
         LOG.info("Start, end: " + start + ", " + end);
 
-        Template currentTemplate = request.session().attribute("template");
+        Template currentTemplate = token.getTemplate();
         LOG.info("Template: " + currentTemplate.getType());
 
-        TableFactory factory = request.session().attribute("factory");
+        TableFactory factory = token.getTableFactory();
         LOG.info("Initializing the start and end in the factory");
         factory.initialize(start, end, contains);
 
@@ -56,7 +62,7 @@ public class postStartEndRoute implements Route {
         if (factory.getNumLocations() > 1) {
             LOG.info("More than one instance of start and end found");
             TableAttributes tableAttributes = new TableAttributes(start, end);
-            request.session().attribute("currentAttributes", tableAttributes);
+            token.setTableAttributes(tableAttributes);
 
             String message = "These starting locations were found:\n";
             int index = 0;
@@ -72,12 +78,12 @@ public class postStartEndRoute implements Route {
 
 
         Map<Integer, Table> tables;
-        if (!request.session().attributes().contains("tables")) {
+        if (token.getTables() == null) {
             tables = new HashMap<>();
-            request.session().attribute("tables", tables);
+            token.setTables(tables);
             LOG.info("Creating and adding table hashmap to session");
         } else {
-            tables = request.session().attribute("tables");
+            tables = token.getTables();
             LOG.info("Loading table hashmap from session");
         }
 
