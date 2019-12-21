@@ -61,7 +61,7 @@ public class postStartEndRoute implements Route {
 
         if (factory.getNumLocations() > 1) {
             LOG.info("More than one instance of start and end found");
-            TableAttributes tableAttributes = new TableAttributes(start, end);
+            TableAttributes tableAttributes = new TableAttributes(start, end, contains);
             token.setTableAttributes(tableAttributes);
 
             String message = "These starting locations were found:\n";
@@ -95,7 +95,7 @@ public class postStartEndRoute implements Route {
         tables.put(curr.hashCode(), curr);
 
         LOG.info("TemplateReader.createTable called with templets <" + currentTemplate.getType() + "> and given start end");
-        TemplateReader.createTable(currentTemplate, start, end, 1);
+        TemplateReader.createTable(currentTemplate, start, end, contains,1);
 
         return 1;
     }
