@@ -97,6 +97,7 @@ public class TableFactory {
         int leftCol = 0;
         int row = 0;
         while(row < list.size()){
+            LOG.info("Comparing: " + start + " and " + list.get(row)[leftCol].trim().toLowerCase());
             if(list.get(row)[leftCol].trim().toLowerCase().contains(start)){
                 Integer[] loc = new Integer[2];
                 loc[0] = row;
