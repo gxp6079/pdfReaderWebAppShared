@@ -40,6 +40,7 @@ public class getSignInRoute implements Route {
         HashMap<String, Token> tokens;
 
         String id = Application.getToken();
+        LOG.info("Token generated from application: " + id);
         if (request.session().attribute("tokens") == null) {
             tokens = new HashMap<>();
             request.session().attribute("tokens", tokens);
