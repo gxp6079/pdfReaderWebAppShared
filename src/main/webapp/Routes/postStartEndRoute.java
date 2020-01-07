@@ -31,11 +31,8 @@ public class postStartEndRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        String decodingTry = URLDecoder.decode(request.queryParams("start"), "UTF-8");
-
         String id = request.queryParams("token");
         Token token = Application.getToken(id, request);
-
 
         String start = request.queryParams("start");
         String end = request.queryParams("end");
@@ -47,7 +44,6 @@ public class postStartEndRoute implements Route {
         }
 
         LOG.info("Start, end: " + start + ", " + end);
-        LOG.info("decoding attempt: " + decodingTry);
 
         Template currentTemplate = token.getTemplate();
         LOG.info("Template: " + currentTemplate.getType());

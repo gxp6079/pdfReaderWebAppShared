@@ -112,9 +112,11 @@ public class TemplateReader {
 
     public static List<String[]> readAllLines(String filename) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            FileInputStream fileInputStream = new FileInputStream(filename);
+            InputStreamReader reader = new InputStreamReader(fileInputStream, "UTF-8");
             CSVReader csvReader = new CSVReader(reader);
             List<String[]> list = csvReader.readAll();
+            fileInputStream.close();
             reader.close();
             csvReader.close();
             return list;
