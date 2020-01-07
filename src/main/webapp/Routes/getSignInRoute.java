@@ -22,7 +22,7 @@ public class getSignInRoute implements Route {
 
     public getSignInRoute() {
         try{
-            fh = new FileHandler("pdfReaderLogFiles/GetSignInRoute.log");
+            fh = new FileHandler("pdfReaderLogFiles/PostSignInRoute.log");
             LOG.addHandler(fh);
             SimpleFormatter formatter = new SimpleFormatter();
             fh.setFormatter(formatter);
@@ -39,15 +39,12 @@ public class getSignInRoute implements Route {
 
         HashMap<String, Token> tokens;
 
-        LOG.info("starting handle method");
-
         String id = Application.getToken();
         if (request.session().attribute("tokens") == null) {
-            LOG.info("there are no tokens in session, creating hashmap");
             tokens = new HashMap<>();
             request.session().attribute("tokens", tokens);
+            LOG.info("tokens created: " + tokens);
         } else {
-            LOG.info("there are tokens in session, getting existing hashmap");
             tokens = request.session().attribute("tokens");
         }
 
@@ -55,16 +52,11 @@ public class getSignInRoute implements Route {
             id = Application.getToken();
         }
 
-        LOG.info("creating new token with id: " + id);
         Token newGeneratedToken = new Token(id);
         tokens.put(id, newGeneratedToken);
+        LOG.info("added token "+ newGeneratedToken);
 
         Gson gson = new Gson();
-
-        response.raw().getWriter().println(gson.toJson(newGeneratedToken));
-
-        LOG.info("token generated: " + gson.toJson(newGeneratedToken));
-
-        return id;
+        return gson.toJson(newGeneratedToken);
     }
 }

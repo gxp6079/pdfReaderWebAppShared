@@ -108,12 +108,17 @@ public class postTemplateRoute implements Route {
     public Object handle(Request request, Response response) throws Exception {
 
         String tokenId = request.queryParams("token");
+        LOG.info("Got token");
         Token token = Application.getToken(tokenId, request);
+        LOG.info("found token: " + token);
 
-        token.setTemplate(new Template());
         String templateType = request.queryParams("type");
+        LOG.info("got template type");
+        token.setTemplate(new Template(templateType));
+        LOG.info("added template");
 
         String path = downloadFile(request);
+        LOG.info("downloaded");
         if (path == null) {
             response.status(400);
             return "Error loading file from request body";

@@ -18,7 +18,7 @@ public class Token {
 
 
     public Token(String id) {
-        this.id = Application.getToken();
+        this.id = id;
     }
 
     public TableAttributes getTableAttributes() {
@@ -41,8 +41,8 @@ public class Token {
         this.tables = tables;
     }
 
-    public void setTemplate(Template template) {
-        this.template = template;
+    public void setTemplate(Template newTemplate) {
+        this.template = newTemplate;
     }
 
     public String getId() {
