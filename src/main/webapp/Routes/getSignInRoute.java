@@ -42,7 +42,7 @@ public class getSignInRoute implements Route {
         LOG.info("starting handle method");
 
         String id = Application.getToken();
-        LOG.info("Token retrieved from application: " + id);
+        LOG.info("Token generated from application: " + id);
         if (request.session().attribute("tokens") == null) {
             LOG.info("there are no tokens in session, creating hashmap");
             tokens = new HashMap<>();
