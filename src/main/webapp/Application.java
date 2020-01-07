@@ -45,6 +45,8 @@ public class Application implements SparkApplication {
 
     public static final String EXIT = "/exit";
 
+    public static final String AVAILABLE_TEMP = "/availableTemplates";
+
     public static void main(String[] args) {
 
         createDatabaseTable();
@@ -85,6 +87,8 @@ public class Application implements SparkApplication {
         post(TEMPLATE_URL, "multipart/form-data", new postTemplateRoute());
 
         get(SIGN_IN, new getSignInRoute());
+
+        get(AVAILABLE_TEMP, new getAvailableTemplatesRoute());
 
     }
 

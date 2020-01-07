@@ -3,6 +3,7 @@ package main.webapp.Model;
 import com.opencsv.CSVReader;
 
 import java.io.*;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -97,6 +98,17 @@ public class TemplateReader {
         try {
             return (Template) DataBaseConnection.deSerializeJavaObjectFromDB(
                     connection, type, institutionId);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Array getTemplatesForInstitutionFromDB(String institutionId) throws SQLException, IOException {
+        Connection connection = DataBaseConnection.makeConnection();
+        try {
+            return DataBaseConnection.getTemplatesForInstitution(
+                    connection, institutionId);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

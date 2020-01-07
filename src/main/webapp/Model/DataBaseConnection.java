@@ -3,11 +3,9 @@ package main.webapp.Model;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class DataBaseConnection {
 
@@ -15,6 +13,7 @@ public abstract class DataBaseConnection {
     public static final String DATABASE_IP = "jdbc:mysql://localhost/PDFreader?serverTimezone=EST";
     private static final String SQL_SERIALIZE_OBJECT = "INSERT INTO TEMPLATES(template_type, template_object, institution_id) VALUES (?, ?, ?)";
     private static final String SQL_DESERIALIZE_OBJECT = "SELECT template_object FROM TEMPLATES WHERE (template_type = ? AND institution_id = ?)";
+    private static final String SQL_TEMPLATES_FOR_INST = "SELECT template_type FROM TEMPLATES WHERE institution_id = ?";
     private static final String SQL_OBJECT_EXISTS = "SELECT EXISTS (SELECT template_object FROM TEMPLATES WHERE (template_type = ? AND institution_id = ?)) ";
 
     public static long serializeJavaObjectToDB(Connection connection,
@@ -117,5 +116,32 @@ public abstract class DataBaseConnection {
         connection = DriverManager.getConnection(url, username, password);
 
         return connection;
+    }
+
+    public static Array getTemplatesForInstitution(Connection connection, String institutionId) throws SQLException, IOException,
+            ClassNotFoundException {
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+        ObjectInputStream objectIn = null;
+        Array deSerializedObject = null;
+
+        pstmt = connection
+                .prepareStatement(SQL_TEMPLATES_FOR_INST);
+        pstmt.setString(1, institutionId);
+        rs = pstmt.executeQuery();
+
+        rs.next();
+
+        // Object object = rs.getObject(1);
+
+        byte[] buf = rs.getBytes(1);
+        objectIn = new ObjectInputStream(new ByteArrayInputStream(buf));
+        deSerializedObject = (Array) objectIn.readObject();
+
+
+        rs.close();
+        pstmt.close();
+
+        return deSerializedObject;
     }
 }
