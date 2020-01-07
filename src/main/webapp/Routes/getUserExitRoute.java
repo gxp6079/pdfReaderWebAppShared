@@ -1,6 +1,7 @@
 package main.webapp.Routes;
 
 import main.webapp.Application;
+import main.webapp.Model.Token;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -33,9 +34,13 @@ public class getUserExitRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
+
+        String tokenId = request.queryParams("token");
+        Token token = Application.getToken(tokenId, request);
+
         try {
             LOG.info("Getting path for CSV file");
-            String pathString = request.session().attribute("path");
+            String pathString = token.getCsvPath();
             LOG.info("Got path string: " + pathString);
             Path path = Paths.get(pathString);
             LOG.info("Got path");
@@ -43,7 +48,7 @@ public class getUserExitRoute implements Route {
             LOG.info("CSV deleted");
 
             LOG.info("Getting path for PDF file");
-            String pdfPathString = request.session().attribute("PDFPath");
+            String pdfPathString = token.getPdfPath();
             LOG.info("Got path string: " + pdfPathString);
             Path pdfPath = Paths.get(pdfPathString);
             LOG.info("Got path");

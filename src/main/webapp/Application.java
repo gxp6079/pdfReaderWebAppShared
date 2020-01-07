@@ -1,14 +1,19 @@
 package main.webapp;
 
 import main.webapp.Model.DataBaseConnection;
+import main.webapp.Model.RandomString;
 import main.webapp.Model.TableFactory;
+import main.webapp.Model.Token;
 import main.webapp.Routes.*;
+import spark.Request;
 import spark.servlet.SparkApplication;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Random;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -18,7 +23,7 @@ import static spark.Spark.post;
 
 public class Application implements SparkApplication {
 
-    private static final Logger LOG = Logger.getLogger(WebServer.class.getName());
+    public static final RandomString tokenGenerator = new RandomString(15, new Random(42));
 
     public static final Logger START_END_LOGGER = Logger.getLogger(postStartEndRoute.class.getName());
     public static FileHandler start_end_fh;
@@ -43,31 +48,20 @@ public class Application implements SparkApplication {
     public static void main(String[] args) {
 
         createDatabaseTable();
-
-        LOG.config("Initialization Complete");
     }
 
     @Override
     public void destroy() {
 
         multiple_inst_fh.close();
-        LOG.info("Closed multiple instance route file handler");
         start_end_fh.close();
-        LOG.info("Closed start end route file handler");
         getFinalInfoRoute.fh.close();
-        LOG.info("Closed finalInfo route file handler");
         getTableInfoRoute.fh.close();
-        LOG.info("Closed getTableInfoRoute route file handler");
         getUserExitRoute.fh.close();
-        LOG.info("Closed getUserExitRoute route file handler");
         postTableInfoRoute.fh.close();
-        LOG.info("Closed postTableInfoRoute route file handler");
         postTemplateRoute.fh.close();
-        LOG.info("Closed postTemplateRoute route file handler");
         TableFactory.fh.close();
-        LOG.info("Closed TableFactory file handler");
-
-
+        getSignInRoute.fh.close();
     }
 
     @Override
@@ -90,9 +84,8 @@ public class Application implements SparkApplication {
 
         post(TEMPLATE_URL, "multipart/form-data", new postTemplateRoute());
 
-        post(SIGN_IN, new postSignInRoute());
+        get(SIGN_IN, new getSignInRoute());
 
-        LOG.finer("WebServer Initialized");
     }
 
     public static void createDatabaseTable() {
@@ -135,4 +128,36 @@ public class Application implements SparkApplication {
 
 
     }
+
+    /**
+     * gets a new token id
+     * @return unique token id
+     */
+    public static String getToken() {
+        return tokenGenerator.nextString();
+    }
+
+
+    /**
+     * get a specific token from the map based on an id
+     * @param id unique token id
+     * @param request request to get session from
+     * @return token object with id provided
+     */
+    public static Token getToken(String id, Request request) {
+        HashMap<String, Token> map = request.session().attribute("tokens");
+        return map.get(id);
+    }
+
+    /**
+     * remove a token object from the session map
+     * @param id unique token id
+     * @param request request to get the session from
+     */
+    public static void clearToken(String id, Request request) {
+        HashMap<String, Token> map = request.session().attribute("tokens");
+        map.remove(id);
+    }
+
+
 }
