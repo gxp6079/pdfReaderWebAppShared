@@ -47,41 +47,4 @@ public class Template implements Serializable {
 
     public String getType(){return this.type;}
 
-    public boolean shouldSave(Logger LOG){
-
-        LOG.info(fields.toString());
-
-        for (Field field : fields.values()){
-            if(field == null){
-                return false;
-            }
-        }
-        return  true;
-    }
-
-    public void save() {
-        String filename = this.type + ".ser";
-        try {
-            FileOutputStream fos = new FileOutputStream(new File(filename));
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(this);
-
-            oos.close();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-    }
-
-    public void saveDB() throws SQLException, IOException {
-
-        Connection connection = DataBaseConnection.makeConnection();
-
-        // serializing java object to mysql database
-        DataBaseConnection.serializeJavaObjectToDB(connection, this);
-
-        connection.close();
-    }
-
 }
