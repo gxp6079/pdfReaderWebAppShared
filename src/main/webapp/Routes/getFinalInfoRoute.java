@@ -1,7 +1,9 @@
 package main.webapp.Routes;
 
+import main.webapp.Application;
 import main.webapp.Model.Template;
 import main.webapp.Model.TemplateReader;
+import main.webapp.Model.Token;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -37,15 +39,18 @@ public class getFinalInfoRoute implements Route {
     @Override
     public Object handle(Request request, Response response) throws Exception {
 
-        Template currentTemplate = request.session().attribute("template");
+
+        Token token = Application.getToken(request.queryParams("token"), request);
+
+        Template currentTemplate = token.getTemplate();
 
         LOG.info("Checking if exists template type: " + currentTemplate.getType());
         try {
-            if (!TemplateReader.checkIfExists(currentTemplate.getType()) && currentTemplate.shouldSave(LOG)) {
+            if (!TemplateReader.checkIfExists(currentTemplate.getType())) {
                 TemplateReader.addToDB(currentTemplate);
                 LOG.info("Adding template \'" + currentTemplate.getType() + "\' to database");
             } else if(TemplateReader.checkIfExists(currentTemplate.getType())) {
-                LOG.info("Templat: " + currentTemplate.getType() + " already exists in database");
+                LOG.info("Template: " + currentTemplate.getType() + " already exists in database");
             }
             else {
                 return "Not all required fields were set";
@@ -61,7 +66,7 @@ public class getFinalInfoRoute implements Route {
             response.raw().setCharacterEncoding(encoding);
 
             LOG.info("Reading data from template: " + currentTemplate.getType());
-            TemplateReader.readExistingTemplate(request.session().attribute("path").toString(),
+            TemplateReader.readExistingTemplate(token.getCsvPath(),
                     currentTemplate.getType(),
                     response.raw().getWriter());
         } catch (Exception e) {

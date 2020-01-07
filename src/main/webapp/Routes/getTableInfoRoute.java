@@ -1,9 +1,7 @@
 package main.webapp.Routes;
 
-import main.webapp.Model.Table;
-import main.webapp.Model.TableFactory;
-import main.webapp.Model.Template;
-import main.webapp.Model.TemplateReader;
+import main.webapp.Application;
+import main.webapp.Model.*;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -41,22 +39,26 @@ public class getTableInfoRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
+        String id = request.queryParams("token");
+        Token token = Application.getToken(id, request);
+
+
         String encoding = "UTF-8";
         LOG.info("Using encoding: " + encoding);
         response.raw().setContentType("text/html; charset="+encoding);
         response.raw().setCharacterEncoding(encoding);
 
-        Template currentTemplate = request.session().attribute("template");
+        Template currentTemplate = token.getTemplate();
         LOG.info("Using template: " + currentTemplate.getType());
 
-        TableFactory factory = request.session().attribute("factory");
+        TableFactory factory = token.getTableFactory();
         LOG.info("Retrieved table factory from session");
 
         LOG.info("Reading tables with template reader");
         HashMap<Integer, Table> tables = TemplateReader.getTables(currentTemplate, factory, response.raw().getWriter(), LOG);
 
         LOG.info("Adding tables to session");
-        request.session().attribute("tables", tables);
+        token.setTables(tables);
 
         return 1;
     }

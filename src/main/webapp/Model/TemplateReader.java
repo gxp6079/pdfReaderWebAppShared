@@ -38,7 +38,7 @@ public class TemplateReader {
 
         TableFactory tableFactory = new TableFactory(list);
         for (TableAttributes ta : template.getTables()) {
-            tableFactory.initialize(ta.START, ta.END);
+            tableFactory.initialize(ta.START, ta.END, ta.contains);
             Table table = tableFactory.makeTable(ta.getOccurrence());
             if (table != null) tables.put(table.hashCode(), table);
         }
@@ -63,7 +63,7 @@ public class TemplateReader {
 
         for(TableAttributes attributes : template.getTables()){
             LOG.info("looking for table with start, end: " + attributes.START + ", " + attributes.END);
-            tableFactory.initialize(attributes.START, attributes.END);
+            tableFactory.initialize(attributes.START, attributes.END, attributes.contains);
             Table table = tableFactory.makeTable(attributes.getOccurrence());
             LOG.info("Table found");
             tables.put(table.hashCode(), table);
@@ -84,9 +84,9 @@ public class TemplateReader {
         return tables;
     }
 
-    public static void createTable(Template template, String start, String end, int instance){
+    public static void createTable(Template template, String start, String end, Boolean contains,int instance){
 
-        TableAttributes attributes = new TableAttributes(start, end);
+        TableAttributes attributes = new TableAttributes(start, end, contains);
         attributes.setOccurrence(instance);
         template.addTable(attributes);
 
