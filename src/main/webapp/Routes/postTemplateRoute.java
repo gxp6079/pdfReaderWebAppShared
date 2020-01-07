@@ -1,8 +1,10 @@
 package main.webapp.Routes;
 
+import main.webapp.Application;
 import main.webapp.Model.TableFactory;
 import main.webapp.Model.Template;
 import main.webapp.Model.TemplateReader;
+import main.webapp.Model.Token;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -104,11 +106,19 @@ public class postTemplateRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-        //String filename = request.queryParams("fileName");
-        request.session().attribute("template", new Template());
+
+        String tokenId = request.queryParams("token");
+        LOG.info("Got token");
+        Token token = Application.getToken(tokenId, request);
+        LOG.info("found token: " + token);
+
         String templateType = request.queryParams("type");
+        LOG.info("got template type");
+        token.setTemplate(new Template(templateType));
+        LOG.info("added template");
 
         String path = downloadFile(request);
+        LOG.info("downloaded");
         if (path == null) {
             response.status(400);
             return "Error loading file from request body";
@@ -128,10 +138,10 @@ public class postTemplateRoute implements Route {
         String csvFilePath = getOutputFilename(path, "csv");
 
         LOG.info("setting new path");
-        request.session().attribute("path", csvFilePath);
+        token.setCsvPath(csvFilePath);
         LOG.info("new path set");
         LOG.info("setting new pdf path");
-        request.session().attribute("PDFPath", path);
+        token.setPdfPath(path);
         LOG.info("new PDF path set");
 
         if (TemplateReader.checkIfExists(templateType)) {
@@ -146,12 +156,12 @@ public class postTemplateRoute implements Route {
         }
 
 
-        Template currentTemplate = request.session().attribute("template");
+        Template currentTemplate = token.getTemplate();
         currentTemplate.setType(templateType);
 
         List<String[]> lines = TemplateReader.readAllLines(csvFilePath);
 
-        request.session().attribute("factory", new TableFactory(lines));
+        token.setTableFactory(new TableFactory(lines));
 
         return 1;
     }

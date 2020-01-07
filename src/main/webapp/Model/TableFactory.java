@@ -49,6 +49,11 @@ public class TableFactory {
      */
     private String end;
 
+    /**
+     * Should use contains
+     */
+    private Boolean contains;
+
     private List<Integer[]> locations;
 
     private static final Logger LOG = Logger.getLogger(postStartEndRoute.class.getName());
@@ -60,6 +65,7 @@ public class TableFactory {
         this.tableRow = new ArrayList<>();
         this.dataIndexes = new ArrayList<>();
         this.list = list;
+        this.contains = contains = true;
         this.row = 0;
         this.col = 0;
 
@@ -80,29 +86,31 @@ public class TableFactory {
     }
 
 
-    public void initialize(String start, String end) {
+    public void initialize(String start, String end, Boolean contains) {
         this.tableRow.clear();
         this.dataIndexes.clear();
         this.row = 0;
         this.col = 0;
+        this.contains = contains;
         this.start = start.trim().toLowerCase();
         this.end = end.trim().toLowerCase();
-        this.locations = getLocation(this.start, this.end);
+        this.locations = getLocation(this.start, this.end, this.contains);
         LOG.info("Table factory initialized with start, end: " + start + ", " + end);
         LOG.info("Number of locations found: " + locations.size());
     }
 
-    public List<Integer[]> getLocation(String start, String end){
+    public List<Integer[]> getLocation(String start, String end, Boolean contains){
         List<Integer[]> locations = new ArrayList<>();
         int leftCol = 0;
         int row = 0;
         while(row < list.size()){
             LOG.info("Comparing: " + start + " and " + list.get(row)[leftCol].trim().toLowerCase());
-            if(list.get(row)[leftCol].trim().toLowerCase().contains(start)){
+            if((contains && list.get(row)[leftCol].trim().toLowerCase().contains(start)) ||
+                    (!contains && list.get(row)[leftCol].trim().toLowerCase().equals(start))){
                 Integer[] loc = new Integer[2];
                 loc[0] = row;
                 loc[1] = leftCol;
-                if (hasEnd(end, row)) locations.add(loc);
+                if (hasEnd(end, row, contains)) locations.add(loc);
             }
             if(leftCol == list.get(row).length - 1){
                 leftCol = 0;
@@ -115,12 +123,12 @@ public class TableFactory {
         return locations;
     }
 
-    private boolean hasEnd(String end, int row) {
+    private boolean hasEnd(String end, int row, Boolean contains) {
         int col = 0;
         try {
             while (row < list.size()) {
                 String val = list.get(row)[col].trim().toLowerCase();
-                if (val.contains(end)) return true;
+                if ((contains && val.contains(end)) || (!contains && val.equals(end))) return true;
                 if (col == list.get(row).length - 1) {
                     col = 0;
                     tableRow.clear();
@@ -179,41 +187,37 @@ public class TableFactory {
         this.col = this.leftCol;
         String val = list.get(row)[col].trim().toLowerCase();
         end = end.trim().toLowerCase();
-        try {
-            while (!val.contains(end)) {
-                val = list.get(row)[col].trim().toLowerCase();
-                if (col >= leftCol) {
-                    if (col == leftCol && !val.equals("")) finishedHead = true;
-                    checkEntry(table, finishedHead);
-                    if (!val.equals("")) {
-                        tableRow.add(val);
-                        LOG.info("Adding '" + val + "' to table row");
-                    } else if (val.equals("") && dataIndexes.contains(col)) {
-                        tableRow.add(val);
-                        LOG.info("Adding '" + val + "' to table row");
-                    }
+        while(!((contains && val.contains(end)) || (!contains && val.equals(end)))) {
+            val = list.get(row)[col].trim().toLowerCase();
+            if (col >= leftCol) {
+                if(col == leftCol && !val.equals("")) finishedHead = true;
+                checkEntry(table, finishedHead);
+                if (!val.equals("")) {
+                    tableRow.add(val);
+                    LOG.info("Adding '" + val + "' to table row");
                 }
-
-                if (col == list.get(row).length - 1) {
-                    if ((list.get(row).length > leftCol && !list.get(row)[leftCol].equals("")) && !tableRow.get(0).contains("...")) {
-                        table.addRow(tableRow);
-                        LOG.info("Adding row of size: " + tableRow.size());
-                    }
-                    col = 0;
-                    tableRow.clear();
-                    this.row++;
-                    if (row >= list.size() && !val.contains(end)) {
-                        System.out.println("End not found");
-                        LOG.info("End" + this.end + " was not found, returning empty table");
-                        return new Table(start, end);
-                    }
-                } else {
-                    col++;
+                else if (val.equals("") && dataIndexes.contains(col)) {
+                    tableRow.add(val);
+                    LOG.info("Adding '" + val + "' to table row");
                 }
             }
-        }
-        catch (Exception e){
-            LOG.info(e.getMessage());
+
+            if(col == list.get(row).length - 1) {
+                if(!list.get(row)[leftCol].equals("") && !tableRow.get(0).contains("...")) {
+                    table.addRow(tableRow);
+                    LOG.info("Adding row of size: " + tableRow.size());
+                }
+                col = 0;
+                tableRow.clear();
+                this.row++;
+                if (row >= list.size() && !((contains && val.contains(end)) || (!contains && val.equals(end)))) {
+                    System.out.println("End not found");
+                    LOG.info("End" + this.end+" was not found, returning empty table");
+                    return new Table(start, end);
+                }
+            } else {
+                col++;
+            }
         }
         LOG.info("End of table found at row, col: " + row + ", " + col);
         return table;

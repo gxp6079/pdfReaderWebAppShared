@@ -19,10 +19,6 @@ public class Template implements Serializable {
         this.tables = new ArrayList<>();
         this.fields = new HashMap<>();
         this.type = type;
-        fields.put("data", null);
-        fields.put("conta", null);
-        fields.put("descricao", null);
-        fields.put("valor bruto", null);
     }
 
     public void setType(String type) {
@@ -38,7 +34,7 @@ public class Template implements Serializable {
     }
 
     public void addField(Field field){
-        fields.replace(field.NAME, field);
+        fields.put(field.NAME, field);
     }
 
     public Map<String, Field> getFields() {
