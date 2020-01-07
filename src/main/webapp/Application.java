@@ -13,7 +13,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -25,8 +24,6 @@ import static spark.Spark.post;
 public class Application implements SparkApplication {
 
     public static final RandomString tokenGenerator = new RandomString(15, new Random(42));
-
-    private static final Logger LOG = Logger.getLogger(WebServer.class.getName());
 
     public static final Logger START_END_LOGGER = Logger.getLogger(postStartEndRoute.class.getName());
     public static FileHandler start_end_fh;
@@ -51,30 +48,20 @@ public class Application implements SparkApplication {
     public static void main(String[] args) {
 
         createDatabaseTable();
-
-        LOG.config("Initialization Complete");
     }
 
     @Override
     public void destroy() {
 
         multiple_inst_fh.close();
-        LOG.info("Closed multiple instance route file handler");
         start_end_fh.close();
-        LOG.info("Closed start end route file handler");
         getFinalInfoRoute.fh.close();
-        LOG.info("Closed finalInfo route file handler");
         getTableInfoRoute.fh.close();
-        LOG.info("Closed getTableInfoRoute route file handler");
         getUserExitRoute.fh.close();
-        LOG.info("Closed getUserExitRoute route file handler");
         postTableInfoRoute.fh.close();
-        LOG.info("Closed postTableInfoRoute route file handler");
         postTemplateRoute.fh.close();
-        LOG.info("Closed postTemplateRoute route file handler");
         TableFactory.fh.close();
-        LOG.info("Closed TableFactory file handler");
-
+        getSignInRoute.fh.close();
 
     }
 
@@ -98,9 +85,8 @@ public class Application implements SparkApplication {
 
         post(TEMPLATE_URL, "multipart/form-data", new postTemplateRoute());
 
-        post(SIGN_IN, new postSignInRoute());
+        get(SIGN_IN, new getSignInRoute());
 
-        LOG.finer("WebServer Initialized");
     }
 
     public static void createDatabaseTable() {

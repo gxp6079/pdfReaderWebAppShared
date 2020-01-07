@@ -18,7 +18,7 @@ import java.util.logging.SimpleFormatter;
  *
  */
 public class postTableInfoRoute implements Route {
-    private static final Logger LOG = Logger.getLogger(WebServer.class.getName());
+    private static final Logger LOG = Logger.getLogger(postTableInfoRoute.class.getName());
     public static FileHandler fh;
 
 
