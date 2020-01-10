@@ -49,7 +49,17 @@ public class TemplateReader {
         Map<String, List<String>> values = new HashMap<>();
 
         for (Field field : template.getFields().values()) {
+            Map<String, String> dictionary = field.getWordLUT();
             List<String> value = field.getValue(tables.get(field.TABLE_ID));
+            if (dictionary.size() == 0) continue;
+            else {
+                ArrayList<String> data = new ArrayList<>(value);
+                for (int i = 0; i < data.size(); i++) {
+                    String curr = data.get(i);
+                    if (dictionary.containsKey(curr)) data.set(i, dictionary.get(curr));
+                }
+                value = data;
+            }
             values.put(field.NAME, value);
             out.println(field.NAME + " :" + String.join(" | ", value));
         }
