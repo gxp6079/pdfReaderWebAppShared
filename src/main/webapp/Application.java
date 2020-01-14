@@ -45,6 +45,8 @@ public class Application implements SparkApplication {
 
     public static final String EXIT = "/exit";
 
+    public static final String UPDATE_FIELD = "/updateField";
+
     public static void main(String[] args) {
 
         createDatabaseTable();
@@ -85,6 +87,8 @@ public class Application implements SparkApplication {
         post(TEMPLATE_URL, "multipart/form-data", new postTemplateRoute());
 
         get(SIGN_IN, new getSignInRoute());
+
+        post(UPDATE_FIELD, new postUpdateFieldRoute());
 
     }
 
