@@ -113,9 +113,6 @@ public class postTemplateRoute implements Route {
         String templateType = request.queryParams("type");
         token.setTemplate(new Template(templateType));
 
-        String institutionId = request.queryParams("institutionId");
-        token.setInstitutionId(institutionId);
-
         String path = downloadFile(request);
         if (path == null) {
             response.status(400);
@@ -142,10 +139,10 @@ public class postTemplateRoute implements Route {
         token.setPdfPath(path);
         LOG.info("new PDF path set");
 
-        if (TemplateReader.checkIfExists(templateType, institutionId)) {
+        if (TemplateReader.checkIfExists(templateType, token.getInstitutionId())) {
             LOG.info("template exists");
             try {
-                TemplateReader.readExistingTemplate(csvFilePath, templateType, institutionId,response.raw().getWriter());
+                TemplateReader.readExistingTemplate(csvFilePath, templateType, token.getInstitutionId(),response.raw().getWriter());
             }
             catch (Exception e){
                 LOG.info("Error reading existing template:" +  e.getMessage());

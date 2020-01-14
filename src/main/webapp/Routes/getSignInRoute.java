@@ -54,8 +54,12 @@ public class getSignInRoute implements Route {
         }
 
         Token newGeneratedToken = new Token(id);
+
+        String institutionId = request.queryParams("institutionId");
+        newGeneratedToken.setInstitutionId(institutionId);
+
         tokens.put(id, newGeneratedToken);
-        LOG.info("added token "+ newGeneratedToken);
+        LOG.info("added token "+ newGeneratedToken + " with institutionId " + institutionId);
 
         Gson gson = new Gson();
         return gson.toJson(newGeneratedToken);

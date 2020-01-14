@@ -104,11 +104,11 @@ public class TemplateReader {
         return null;
     }
 
-    public static Array getTemplatesForInstitutionFromDB(String institutionId) throws SQLException, IOException {
+    public static ArrayList<String> getTemplatesForInstitutionFromDB(String institutionId, Logger LOG) throws SQLException, IOException {
         Connection connection = DataBaseConnection.makeConnection();
         try {
             return DataBaseConnection.getTemplatesForInstitution(
-                    connection, institutionId);
+                    connection, institutionId, LOG);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }

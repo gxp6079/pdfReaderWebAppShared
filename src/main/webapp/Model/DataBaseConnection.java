@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public abstract class DataBaseConnection {
 
@@ -118,30 +119,33 @@ public abstract class DataBaseConnection {
         return connection;
     }
 
-    public static Array getTemplatesForInstitution(Connection connection, String institutionId) throws SQLException, IOException,
+    public static ArrayList<String> getTemplatesForInstitution(Connection connection, String institutionId, Logger LOG) throws SQLException, IOException,
             ClassNotFoundException {
         ResultSet rs = null;
         PreparedStatement pstmt = null;
         ObjectInputStream objectIn = null;
-        Array deSerializedObject = null;
+        ArrayList<String> listOfTemplates = new ArrayList<>();
 
         pstmt = connection
                 .prepareStatement(SQL_TEMPLATES_FOR_INST);
         pstmt.setString(1, institutionId);
         rs = pstmt.executeQuery();
 
-        rs.next();
-
-        // Object object = rs.getObject(1);
-
-        byte[] buf = rs.getBytes(1);
-        objectIn = new ObjectInputStream(new ByteArrayInputStream(buf));
-        deSerializedObject = (Array) objectIn.readObject();
-
+        LOG.info("executed query and got response:" + rs);
+        while(rs.next()) {
+            LOG.info("attempt to get the first item");
+            try {
+                String type = rs.getString("template_type");
+                listOfTemplates.add(type);
+            }
+            catch (Exception e){
+                LOG.info(e.getMessage());
+            }
+        }
 
         rs.close();
         pstmt.close();
 
-        return deSerializedObject;
+        return listOfTemplates;
     }
 }
