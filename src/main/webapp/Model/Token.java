@@ -10,6 +10,7 @@ public class Token {
 
     private Template template;
     private String id;
+    private String institutionId;
     private String csvPath;
     private TableFactory tableFactory;
     private String pdfPath;
@@ -52,6 +53,10 @@ public class Token {
     public void setId(String id) {
         this.id = id;
     }
+
+    public String getInstitutionId() { return institutionId; }
+
+    public void setInstitutionId(String institutionId) { this.institutionId = institutionId; }
 
     public String getCsvPath() {
         return csvPath;

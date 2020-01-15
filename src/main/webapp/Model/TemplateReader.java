@@ -2,8 +2,8 @@ package main.webapp.Model;
 
 import com.opencsv.CSVReader;
 
-import javax.servlet.ServletOutputStream;
 import java.io.*;
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -17,16 +17,16 @@ public class TemplateReader {
      * @return true if exists false otherwise
      * @throws SQLException thrown if cannot access database
      */
-    public static boolean checkIfExists(String templateName) throws SQLException {
+    public static boolean checkIfExists(String templateName, String institutionId) throws SQLException {
         Connection connection = DataBaseConnection.makeConnection();
-        return DataBaseConnection.checkIfObjExists(connection, templateName);
+        return DataBaseConnection.checkIfObjExists(connection, templateName, institutionId);
     }
 
 
-    public static void readExistingTemplate(String filename, String templateName, PrintWriter out) throws IOException {
+    public static void readExistingTemplate(String filename, String templateName, String institutionId, PrintWriter out) throws IOException {
         Template template = null;
         try {
-            template = readFromDB(templateName);
+            template = readFromDB(templateName, institutionId);
         } catch (SQLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -103,28 +103,41 @@ public class TemplateReader {
     }
 
 
-    public static Template readFromDB(String type) throws SQLException, IOException {
+    public static Template readFromDB(String type, String institutionId) throws SQLException, IOException {
         Connection connection = DataBaseConnection.makeConnection();
         try {
             return (Template) DataBaseConnection.deSerializeJavaObjectFromDB(
-                    connection, type);
+                    connection, type, institutionId);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         return null;
     }
 
-    public static void addToDB(Template template) throws SQLException {
+    public static ArrayList<String> getTemplatesForInstitutionFromDB(String institutionId, Logger LOG) throws SQLException, IOException {
         Connection connection = DataBaseConnection.makeConnection();
-        DataBaseConnection.serializeJavaObjectToDB(connection, template);
+        try {
+            return DataBaseConnection.getTemplatesForInstitution(
+                    connection, institutionId, LOG);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void addToDB(Template template, String institutionId) throws SQLException {
+        Connection connection = DataBaseConnection.makeConnection();
+        DataBaseConnection.serializeJavaObjectToDB(connection, template, institutionId);
     }
 
 
     public static List<String[]> readAllLines(String filename) {
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(filename));
+            FileInputStream fileInputStream = new FileInputStream(filename);
+            InputStreamReader reader = new InputStreamReader(fileInputStream, "UTF-8");
             CSVReader csvReader = new CSVReader(reader);
             List<String[]> list = csvReader.readAll();
+            fileInputStream.close();
             reader.close();
             csvReader.close();
             return list;

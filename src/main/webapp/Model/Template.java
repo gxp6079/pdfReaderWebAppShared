@@ -19,10 +19,6 @@ public class Template implements Serializable {
         this.tables = new ArrayList<>();
         this.fields = new HashMap<>();
         this.type = type;
-        fields.put("data", null);
-        fields.put("conta", null);
-        fields.put("descricao", null);
-        fields.put("valor bruto", null);
     }
 
     public void setType(String type) {
@@ -38,7 +34,7 @@ public class Template implements Serializable {
     }
 
     public void addField(Field field){
-        fields.replace(field.NAME, field);
+        fields.put(field.NAME, field);
     }
 
     public Map<String, Field> getFields() {
@@ -50,42 +46,5 @@ public class Template implements Serializable {
     }
 
     public String getType(){return this.type;}
-
-    public boolean shouldSave(Logger LOG){
-
-        LOG.info(fields.toString());
-
-        for (Field field : fields.values()){
-            if(field == null){
-                return false;
-            }
-        }
-        return  true;
-    }
-
-    public void save() {
-        String filename = this.type + ".ser";
-        try {
-            FileOutputStream fos = new FileOutputStream(new File(filename));
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(this);
-
-            oos.close();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
-        }
-    }
-
-    public void saveDB() throws SQLException, IOException {
-
-        Connection connection = DataBaseConnection.makeConnection();
-
-        // serializing java object to mysql database
-        DataBaseConnection.serializeJavaObjectToDB(connection, this);
-
-        connection.close();
-    }
 
 }

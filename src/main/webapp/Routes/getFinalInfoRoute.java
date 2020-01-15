@@ -43,13 +43,14 @@ public class getFinalInfoRoute implements Route {
         Token token = Application.getToken(request.queryParams("token"), request);
 
         Template currentTemplate = token.getTemplate();
+        String institutionId = token.getInstitutionId();
 
         LOG.info("Checking if exists template type: " + currentTemplate.getType());
         try {
-            if (!TemplateReader.checkIfExists(currentTemplate.getType()) && currentTemplate.shouldSave(LOG)) {
-                TemplateReader.addToDB(currentTemplate);
+            if (!TemplateReader.checkIfExists(currentTemplate.getType(), institutionId)) {
+                TemplateReader.addToDB(currentTemplate, institutionId);
                 LOG.info("Adding template \'" + currentTemplate.getType() + "\' to database");
-            } else if(TemplateReader.checkIfExists(currentTemplate.getType())) {
+            } else if(TemplateReader.checkIfExists(currentTemplate.getType(), institutionId)) {
                 LOG.info("Template: " + currentTemplate.getType() + " already exists in database");
             }
             else {
@@ -68,6 +69,7 @@ public class getFinalInfoRoute implements Route {
             LOG.info("Reading data from template: " + currentTemplate.getType());
             TemplateReader.readExistingTemplate(token.getCsvPath(),
                     currentTemplate.getType(),
+                    institutionId,
                     response.raw().getWriter());
         } catch (Exception e) {
             LOG.info("Exception thrown when reading template" + e.getMessage());

@@ -6,6 +6,8 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import java.net.URI;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.FileHandler;
@@ -29,10 +31,8 @@ public class postStartEndRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) throws Exception {
-
         String id = request.queryParams("token");
         Token token = Application.getToken(id, request);
-
 
         String start = request.queryParams("start");
         String end = request.queryParams("end");
