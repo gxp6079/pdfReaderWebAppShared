@@ -16,6 +16,7 @@ public abstract class DataBaseConnection {
     private static final String SQL_DESERIALIZE_OBJECT = "SELECT template_object FROM TEMPLATES WHERE (template_type = ? AND institution_id = ?)";
     private static final String SQL_TEMPLATES_FOR_INST = "SELECT template_type FROM TEMPLATES WHERE institution_id = ?";
     private static final String SQL_OBJECT_EXISTS = "SELECT EXISTS (SELECT template_object FROM TEMPLATES WHERE (template_type = ? AND institution_id = ?)) ";
+    private static final String SQL_UPDATE_TEMPLATE = "UPDATE TEMPLATES SET template_object = ? WHERE (template_type = ? AND institution_id = ?)";
 
     public static long serializeJavaObjectToDB(Connection connection,
                                                Template objectToSerialize, String institutionId) throws SQLException {
@@ -147,5 +148,19 @@ public abstract class DataBaseConnection {
         pstmt.close();
 
         return listOfTemplates;
+    }
+
+    public static void updateTemplateInDB(Connection connection, String institutionId, Template updateTo)throws SQLException, IOException,
+            ClassNotFoundException {
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+
+        pstmt = connection
+                .prepareStatement(SQL_UPDATE_TEMPLATE);
+        pstmt.setObject(1, updateTo);
+        pstmt.setString(2, updateTo.getType());
+        pstmt.setString(3, institutionId);
+        pstmt.executeUpdate();
+        pstmt.close();
     }
 }

@@ -70,14 +70,13 @@ public class getFinalInfoRoute implements Route {
             TemplateReader.readExistingTemplate(token.getCsvPath(),
                     currentTemplate.getType(),
                     institutionId,
-                    response.raw().getWriter());
+                    response.raw().getWriter(), LOG);
         } catch (Exception e) {
             LOG.info("Exception thrown when reading template" + e.getMessage());
         }
 
-        LOG.info("GetFinalInfo completed successfully");
         fh.flush();
-
+        LOG.info("GetFinalInfo completed successfully");
         return 1;
     }
 }

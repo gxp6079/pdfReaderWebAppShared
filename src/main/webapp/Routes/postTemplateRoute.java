@@ -142,7 +142,7 @@ public class postTemplateRoute implements Route {
         if (TemplateReader.checkIfExists(templateType, token.getInstitutionId())) {
             LOG.info("template exists");
             try {
-                TemplateReader.readExistingTemplate(csvFilePath, templateType, token.getInstitutionId(),response.raw().getWriter());
+                TemplateReader.readExistingTemplate(csvFilePath, templateType, token.getInstitutionId(),response.raw().getWriter(), LOG);
             }
             catch (Exception e){
                 LOG.info("Error reading existing template:" +  e.getMessage());

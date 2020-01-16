@@ -23,47 +23,49 @@ public class TemplateReader {
     }
 
 
-    public static void readExistingTemplate(String filename, String templateName, String institutionId, PrintWriter out) throws IOException {
+    public static void readExistingTemplate(String filename, String templateName, String institutionId, PrintWriter out, Logger LOG) throws IOException {
         Template template = null;
         try {
-            template = readFromDB(templateName, institutionId);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        List<String[]> list = readAllLines(filename);
+            template = readFromDB(templateName, institutionId, LOG);
+            LOG.info("Template successfully retrieved");
 
-        Map<Integer, Table> tables = new HashMap<>();
+            List<String[]> list = readAllLines(filename);
 
-        TableFactory tableFactory = new TableFactory(list);
-        for (TableAttributes ta : template.getTables()) {
-            tableFactory.initialize(ta.START, ta.END, ta.contains);
-            Table table = tableFactory.makeTable(ta.getOccurrence());
-            if (table != null) tables.put(table.hashCode(), table);
-        }
+            Map<Integer, Table> tables = new HashMap<>();
 
-        /**
-         * name of field to value
-         */
-        Map<String, List<String>> values = new HashMap<>();
-
-        for (Field field : template.getFields().values()) {
-            Map<String, String> dictionary = field.getWordLUT();
-            List<String> value = field.getValue(tables.get(field.TABLE_ID));
-            if (dictionary.size() == 0) continue;
-            else {
-                ArrayList<String> data = new ArrayList<>(value);
-                for (int i = 0; i < data.size(); i++) {
-                    String curr = data.get(i);
-                    if (dictionary.containsKey(curr)) data.set(i, dictionary.get(curr));
-                }
-                value = data;
+            TableFactory tableFactory = new TableFactory(list);
+            for (TableAttributes ta : template.getTables()) {
+                tableFactory.initialize(ta.START, ta.END, ta.contains);
+                Table table = tableFactory.makeTable(ta.getOccurrence());
+                if (table != null) tables.put(table.hashCode(), table);
             }
-            values.put(field.NAME, value);
-            out.println(field.NAME + " :" + String.join(" | ", value));
-        }
 
+            /**
+             * name of field to value
+             */
+            Map<String, List<String>> values = new HashMap<>();
+
+            for (Field field : template.getFields().values()) {
+                Map<String, String> dictionary = field.getWordLUT();
+                List<String> value = field.getValue(tables.get(field.TABLE_ID));
+                if (dictionary.size() == 0) continue;
+                else {
+                    ArrayList<String> data = new ArrayList<>(value);
+                    for (int i = 0; i < data.size(); i++) {
+                        String curr = data.get(i);
+                        if (dictionary.containsKey(curr)) data.set(i, dictionary.get(curr));
+                    }
+                    value = data;
+                }
+                values.put(field.NAME, value);
+                out.println(field.NAME + " :" + String.join(" | ", value));
+            }
+            LOG.info("table info printing complete");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            LOG.info(e.getMessage());
+        }
     }
 
     public static HashMap<Integer, Table> getTables(Template template, TableFactory tableFactory, PrintWriter out, Logger LOG) throws IOException {
@@ -103,13 +105,14 @@ public class TemplateReader {
     }
 
 
-    public static Template readFromDB(String type, String institutionId) throws SQLException, IOException {
+    public static Template readFromDB(String type, String institutionId, Logger LOG) throws SQLException, IOException {
         Connection connection = DataBaseConnection.makeConnection();
         try {
             return (Template) DataBaseConnection.deSerializeJavaObjectFromDB(
                     connection, type, institutionId);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
+            LOG.info(e.getMessage());
         }
         return null;
     }

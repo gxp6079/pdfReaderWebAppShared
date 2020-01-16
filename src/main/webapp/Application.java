@@ -47,6 +47,8 @@ public class Application implements SparkApplication {
 
     public static final String AVAILABLE_TEMP = "/availableTemplates";
 
+    public static final String UPDATE_FIELD = "/updateField";
+
     public static void main(String[] args) {
 
         createDatabaseTable();
@@ -91,6 +93,7 @@ public class Application implements SparkApplication {
 
         get(AVAILABLE_TEMP, new getAvailableTemplatesRoute());
 
+        post(UPDATE_FIELD, new postUpdateFieldRoute());
     }
 
     public static void createDatabaseTable() {
