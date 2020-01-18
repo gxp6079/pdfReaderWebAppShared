@@ -15,19 +15,19 @@ public class Token {
     private TableFactory tableFactory;
     private String pdfPath;
     private Map<String, Table> tables;
-    private TableAttributes tableAttributes;
+    private HashMap<String, TableAttributes> tableAttributes;
 
 
     public Token(String id) {
         this.id = id;
     }
 
-    public TableAttributes getTableAttributes() {
-        return tableAttributes;
+    public TableAttributes getTableAttributes(String tableId) {
+        return tableAttributes.get(tableId);
     }
 
     public void setTableAttributes(TableAttributes tableAttributes) {
-        this.tableAttributes = tableAttributes;
+        this.tableAttributes.put(tableAttributes.tableId, tableAttributes);
     }
 
     public Template getTemplate() {
