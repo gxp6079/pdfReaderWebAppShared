@@ -33,7 +33,9 @@ public class postUpdateFieldRoute implements Route {
 
         Connection connection = DataBaseConnection.makeConnection();
         try {
-            DataBaseConnection.updateTemplateInDB(connection, token.getInstitutionId(), token.getTemplate());
+            if(DataBaseConnection.checkIfObjExists(connection, token.getTemplate().getType(), token.getInstitutionId())) {
+                DataBaseConnection.updateTemplateInDB(connection, token.getInstitutionId(), token.getTemplate());
+            }
         }
         catch (Exception e){
             e.printStackTrace();
