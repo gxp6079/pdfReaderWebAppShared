@@ -26,6 +26,7 @@ public class postMultipleInstancesRoute implements Route {
     @Override
     public Object handle(Request request, Response response) throws Exception {
         String id = request.queryParams("token");
+        String tableId = request.queryParams("tableId");
         Token token = Application.getToken(id, request);
 
 
@@ -53,7 +54,7 @@ public class postMultipleInstancesRoute implements Route {
             LOG.info("Loading table hashmap from session");
         }
 
-        TableAttributes tableAttributes = token.getTableAttributes();
+        TableAttributes tableAttributes = token.getTableAttributes(tableId);
 
         Template currentTemplate = token.getTemplate();
 
@@ -63,7 +64,7 @@ public class postMultipleInstancesRoute implements Route {
         LOG.info("Adding table to hashmap");
         tables.put(tableAttributes.tableId, curr);
 
-        TemplateReader.createTable(currentTemplate, tableAttributes.START, tableAttributes.END, tableAttributes.contains, tableAttributes.tableId, instance);
+        TemplateReader.createTable(currentTemplate, tableAttributes.START, tableAttributes.END, tableAttributes.contains, tableId, instance);
 
         token.setTableAttributes(null);
         return 1;
