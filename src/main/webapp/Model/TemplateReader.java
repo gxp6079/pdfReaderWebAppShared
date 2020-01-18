@@ -68,7 +68,7 @@ public class TemplateReader {
         }
     }
 
-    public static HashMap<String, Table> getTables(Template template, TableFactory tableFactory, PrintWriter out, Logger LOG) throws IOException {
+    public static HashMap<String, Table> getTables(Template template, TableFactory tableFactory, Logger LOG) throws IOException {
 
         LOG.info("getTables() method called in TemplateReader");
         HashMap<String, Table> tables = new HashMap<>();
@@ -81,6 +81,10 @@ public class TemplateReader {
             tables.put(attributes.tableId, table);
         }
 
+        return tables;
+    }
+
+    public static void printTables(HashMap<String, Table> tables, PrintWriter out, Logger LOG){
         LOG.info("Printing tables");
         for(String id : tables.keySet()){
             out.println(id);
@@ -92,8 +96,6 @@ public class TemplateReader {
             }
             out.println("\n");
         }
-
-        return tables;
     }
 
     public static void createTable(Template template, String start, String end, Boolean contains, String tableId, int instance){
