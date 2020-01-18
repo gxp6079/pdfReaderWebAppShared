@@ -6,11 +6,11 @@ import java.util.List;
 
 public class Field implements Serializable {
     public final String NAME;
-    public final int TABLE_ID;
+    public final String TABLE_ID;
     public final String HEADER;
     private HashMap<String, String> wordLUT;
 
-    public Field(String name, int table, String header){
+    public Field(String name, String table, String header){
         this.NAME = name;
         this.TABLE_ID = table;
         this.HEADER = header;
@@ -29,4 +29,8 @@ public class Field implements Serializable {
         this.wordLUT.put(key, value);
     }
 
+    @Override
+    public int hashCode() {
+        return NAME.hashCode() + TABLE_ID.hashCode();
+    }
 }

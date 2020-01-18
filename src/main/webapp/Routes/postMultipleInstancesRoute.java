@@ -43,7 +43,7 @@ public class postMultipleInstancesRoute implements Route {
             return "Too large instance input, no valid location";
         }
 
-        Map<Integer, Table> tables;
+        Map<String, Table> tables;
         if (token.getTables() == null) {
             tables = new HashMap<>();
             token.setTables(tables);
@@ -61,9 +61,9 @@ public class postMultipleInstancesRoute implements Route {
         Table curr = factory.makeTable(instance);
 
         LOG.info("Adding table to hashmap");
-        tables.put(curr.hashCode(), curr);
+        tables.put(tableAttributes.tableId, curr);
 
-        TemplateReader.createTable(currentTemplate, tableAttributes.START, tableAttributes.END, tableAttributes.contains, instance);
+        TemplateReader.createTable(currentTemplate, tableAttributes.START, tableAttributes.END, tableAttributes.contains, tableAttributes.tableId, instance);
 
         token.setTableAttributes(null);
         return 1;

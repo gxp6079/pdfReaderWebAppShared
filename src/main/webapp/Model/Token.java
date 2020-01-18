@@ -14,7 +14,7 @@ public class Token {
     private String csvPath;
     private TableFactory tableFactory;
     private String pdfPath;
-    private Map<Integer, Table> tables;
+    private Map<String, Table> tables;
     private TableAttributes tableAttributes;
 
 
@@ -34,11 +34,11 @@ public class Token {
         return template;
     }
 
-    public Map<Integer, Table> getTables() {
+    public Map<String, Table> getTables() {
         return tables;
     }
 
-    public void setTables(Map<Integer, Table> tables) {
+    public void setTables(Map<String, Table> tables) {
         this.tables = tables;
     }
 

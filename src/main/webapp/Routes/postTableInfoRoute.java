@@ -49,16 +49,16 @@ public class postTableInfoRoute implements Route {
 
         String fieldName = request.queryParams("field").trim().toLowerCase();
         String value = request.queryParams("value");
-        int id = Integer.parseInt(request.queryParams("id"));
+        String id = request.queryParams("tableId");
 
         LOG.info("Retrieving tables from session");
-        Map<Integer, Table> tables = token.getTables();
+        Map<String, Table> tables = token.getTables();
 
-        LOG.info("Getting table based on id " + Integer.toString(id));
+        LOG.info("Getting table based on id " + id);
         Table curr = tables.get(id);
         if (curr == null) {
             response.status(400);
-            LOG.info("Table id: " + Integer.toString(id) + " not found\nFailed to add to template");
+            LOG.info("Table id: " + id + " not found\nFailed to add to template");
             return "table id not found";
         }
 

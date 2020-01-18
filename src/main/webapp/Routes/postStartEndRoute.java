@@ -36,6 +36,7 @@ public class postStartEndRoute implements Route {
 
         String start = request.queryParams("start");
         String end = request.queryParams("end");
+        String tableId = request.queryParams("tableId");
         Boolean contains = true;
         try {
             contains = Boolean.valueOf(request.queryParams("use_contains"));
@@ -61,7 +62,7 @@ public class postStartEndRoute implements Route {
 
         if (factory.getNumLocations() > 1) {
             LOG.info("More than one instance of start and end found");
-            TableAttributes tableAttributes = new TableAttributes(start, end, contains);
+            TableAttributes tableAttributes = new TableAttributes(start, end, contains, tableId);
             token.setTableAttributes(tableAttributes);
 
             String message = "These starting locations were found:\n";
@@ -75,7 +76,7 @@ public class postStartEndRoute implements Route {
         }
 
 
-        Map<Integer, Table> tables;
+        Map<String, Table> tables;
         if (token.getTables() == null) {
             tables = new HashMap<>();
             token.setTables(tables);
@@ -90,11 +91,11 @@ public class postStartEndRoute implements Route {
         Table curr = factory.makeTable(1);
 
         LOG.info("Adding table to hashmap");
-        tables.put(curr.hashCode(), curr);
+        tables.put(tableId, curr);
 
         LOG.info("TemplateReader.createTable called with templets <" + currentTemplate.getType() + "> and given start end");
-        TemplateReader.createTable(currentTemplate, start, end, contains,1);
+        TemplateReader.createTable(currentTemplate, start, end, contains, tableId,1);
 
-        return 1;
+        return curr.hashCode();
     }
 }

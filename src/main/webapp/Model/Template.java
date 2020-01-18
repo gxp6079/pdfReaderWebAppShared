@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class Template implements Serializable {
     private List<TableAttributes> tables;
-    private HashMap<String, Field> fields;
+    private HashMap<Integer, Field> fields;
     private String type;
 
     public Template() {
@@ -34,10 +34,10 @@ public class Template implements Serializable {
     }
 
     public void addField(Field field){
-        fields.put(field.NAME, field);
+        fields.put(field.hashCode(), field);
     }
 
-    public Map<String, Field> getFields() {
+    public Map<Integer, Field> getFields() {
         return this.fields;
     }
 

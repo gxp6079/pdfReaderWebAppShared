@@ -55,7 +55,7 @@ public class getTableInfoRoute implements Route {
         LOG.info("Retrieved table factory from session");
 
         LOG.info("Reading tables with template reader");
-        HashMap<Integer, Table> tables = TemplateReader.getTables(currentTemplate, factory, response.raw().getWriter(), LOG);
+        HashMap<String, Table> tables = TemplateReader.getTables(currentTemplate, factory, response.raw().getWriter(), LOG);
 
         LOG.info("Adding tables to session");
         token.setTables(tables);

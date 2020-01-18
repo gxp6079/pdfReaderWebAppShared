@@ -68,21 +68,21 @@ public class TemplateReader {
         }
     }
 
-    public static HashMap<Integer, Table> getTables(Template template, TableFactory tableFactory, PrintWriter out, Logger LOG) throws IOException {
+    public static HashMap<String, Table> getTables(Template template, TableFactory tableFactory, PrintWriter out, Logger LOG) throws IOException {
 
         LOG.info("getTables() method called in TemplateReader");
-        HashMap<Integer, Table> tables = new HashMap<>();
+        HashMap<String, Table> tables = new HashMap<>();
 
         for(TableAttributes attributes : template.getTables()){
             LOG.info("looking for table with start, end: " + attributes.START + ", " + attributes.END);
             tableFactory.initialize(attributes.START, attributes.END, attributes.contains);
             Table table = tableFactory.makeTable(attributes.getOccurrence());
             LOG.info("Table found");
-            tables.put(table.hashCode(), table);
+            tables.put(attributes.tableId, table);
         }
 
         LOG.info("Printing tables");
-        for(Integer id : tables.keySet()){
+        for(String id : tables.keySet()){
             out.println(id);
             try {
                 out.println(String.valueOf(tables.get(id)));
@@ -96,9 +96,9 @@ public class TemplateReader {
         return tables;
     }
 
-    public static void createTable(Template template, String start, String end, Boolean contains,int instance){
+    public static void createTable(Template template, String start, String end, Boolean contains, String tableId, int instance){
 
-        TableAttributes attributes = new TableAttributes(start, end, contains);
+        TableAttributes attributes = new TableAttributes(start, end, contains, tableId);
         attributes.setOccurrence(instance);
         template.addTable(attributes);
 
