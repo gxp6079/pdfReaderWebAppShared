@@ -54,6 +54,12 @@ public class TableFactory {
      */
     private Boolean contains;
 
+    /**
+     * whether the table is horizontal or vertical
+     * used for accessing data
+     */
+    private TableAttributes.Orientation orientation;
+
     private List<Integer[]> locations;
 
     private static final Logger LOG = Logger.getLogger(postStartEndRoute.class.getName());
@@ -86,12 +92,13 @@ public class TableFactory {
     }
 
 
-    public void initialize(String start, String end, Boolean contains) {
+    public void initialize(String start, String end, Boolean contains, TableAttributes.Orientation orientation) {
         this.tableRow.clear();
         this.dataIndexes.clear();
         this.row = 0;
         this.col = 0;
         this.contains = contains;
+        this.orientation = orientation;
         this.start = start.trim().toLowerCase();
         this.end = end.trim().toLowerCase();
         this.locations = getLocation(this.start, this.end, this.contains);
@@ -161,7 +168,7 @@ public class TableFactory {
             if(locations.size() == 0){
                 LOG.info("Failed to make table, no locations found for start, end :"  + start + ", " + end);
                 System.out.println("Start not found");
-                return new Table(start, end);
+                return new Table(start, end, orientation);
             }
             else{
                 this.row = locations.get(location - 1)[0];
@@ -175,7 +182,7 @@ public class TableFactory {
             LOG.info("Only one possible location exists");
             LOG.info("Using location row, leftCol: " + this.row + ", " + this.leftCol);
         }
-        Table table = new Table(start, end);
+        Table table = new Table(start, end, orientation);
         LOG.info("Table object created with start, end: " + start + ", " + end);
 
         initializeHeaders(table);
@@ -213,7 +220,7 @@ public class TableFactory {
                 if (row >= list.size() && !((contains && val.contains(end)) || (!contains && val.equals(end)))) {
                     System.out.println("End not found");
                     LOG.info("End" + this.end+" was not found, returning empty table");
-                    return new Table(start, end);
+                    return new Table(start, end, orientation);
                 }
             } else {
                 col++;

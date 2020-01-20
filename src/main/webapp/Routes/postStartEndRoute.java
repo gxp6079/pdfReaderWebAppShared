@@ -33,10 +33,14 @@ public class postStartEndRoute implements Route {
     public Object handle(Request request, Response response) throws Exception {
         String id = request.queryParams("token");
         Token token = Application.getToken(id, request);
-
         String start = request.queryParams("start");
         String end = request.queryParams("end");
         String tableId = request.queryParams("tableId");
+
+        String tableOrientation = request.queryParams("orientation");
+        TableAttributes.Orientation orientation = tableOrientation.equals("1") ? TableAttributes.Orientation.VERTICAL : TableAttributes.Orientation.HORIZONTAL;
+
+
         Boolean contains = true;
         try {
             contains = Boolean.valueOf(request.queryParams("use_contains"));
@@ -51,7 +55,7 @@ public class postStartEndRoute implements Route {
 
         TableFactory factory = token.getTableFactory();
         LOG.info("Initializing the start and end in the factory");
-        factory.initialize(start, end, contains);
+        factory.initialize(start, end, contains, orientation);
 
         if (factory.getNumLocations() == 0) {
             LOG.info("ERROR: start or end was not found in the table.");
@@ -62,7 +66,7 @@ public class postStartEndRoute implements Route {
 
         if (factory.getNumLocations() > 1) {
             LOG.info("More than one instance of start and end found");
-            TableAttributes tableAttributes = new TableAttributes(start, end, contains, tableId);
+            TableAttributes tableAttributes = new TableAttributes(start, end, contains, tableId, orientation);
             token.setTableAttributes(tableAttributes);
 
             String message = "These starting locations were found:\n";
@@ -94,7 +98,7 @@ public class postStartEndRoute implements Route {
         tables.put(tableId, curr);
 
         LOG.info("TemplateReader.createTable called with templets <" + currentTemplate.getType() + "> and given start end");
-        TemplateReader.createTable(currentTemplate, start, end, contains, tableId,1);
+        TemplateReader.createTable(currentTemplate, start, end, contains, tableId,1, orientation);
 
         return tableId;
     }

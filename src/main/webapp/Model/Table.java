@@ -8,6 +8,7 @@ public class Table {
     private String start;
     private String end;
 
+    private TableAttributes.Orientation orientation;
 
     /**
      * maps header column to header
@@ -20,11 +21,12 @@ public class Table {
      */
     private Map<Integer, Header> subHeaders;
 
-    public Table(String start, String end){
-        this.headerList = new TreeMap<Integer, Header>();
-        this.subHeaders =  new TreeMap<Integer, Header>();
+    public Table(String start, String end, TableAttributes.Orientation orientation){
+        this.headerList = new HashMap<>();
+        this.subHeaders =  new HashMap<>();
         this.start = start;
         this.end = end;
+        this.orientation = orientation;
         this.table = new ArrayList<List<String>>();
     }
 
@@ -60,50 +62,63 @@ public class Table {
 
     /***
      * gets data in the column or row of a specified header
-     * @param header
+     * @param value value to search for in the table
      * @return
      */
-    public List<String> getDataAt(String header) {
+    public List<String> getDataAt(String value) {
         boolean found = false;
-        header = header.trim().toLowerCase();
-        int col = 0;
+        value = value.trim().toLowerCase();
+        int colNum = 0;
+        int rowNum = 0;
+        ArrayList<String> data = new ArrayList<>();
+
+
+
+        // find value in table
+
         for (int i : headerList.keySet()) {
-            String val = headerList.get(i).getValue();
-            if (val.contains(header)){
-                found = true;
+            Header h = headerList.get(i);
+            if (h.getValue().equals(value)) {
+                colNum = h.getCol();
+                rowNum = 0;
+                found = true; // to skip searching rest of table
+                data.add(h.getValue());
+                if (subHeaders.containsKey(colNum)) data.add(subHeaders.get(colNum).getValue());
                 break;
             }
-            else if (headerList.get(i).hasChildren()) {
-                for (Header h : headerList.get(i).getChildren()) {
-                    if (h.getValue().contains(header)){
-                        found = true;
+            if (h.hasChildren()) {
+                for (Header child : h.getChildren()) {
+                    if (child.getValue().equals(value)) {
+                        colNum = child.getCol();
+                        rowNum = 0;
+                        found = true; // to skip searching rest of table
+                        data.add(child.getValue());
                         break;
                     }
-                    col++;
                 }
-            } else {
-                if (headerList.get(i).getValue().contains(header)){
-                    found = true;
-                    break;
+            }
+        }
+        if (!found) {
+            for (rowNum = 0; rowNum < this.table.size(); rowNum++) {
+                List<String> row = this.table.get(rowNum);
+                for (colNum = 0; colNum < row.size(); colNum++) {
+                    String currentVal = row.get(colNum).trim().toLowerCase();
+                    if (currentVal.equals(value)) break;
                 }
-                col++;
             }
         }
 
-        if (!found){
-            for (List<String> row : table){
-                if(row.get(0).contains(header)){
-                    return row.subList(0, row.size());
-                }
-            }
-            return null;
-        }
+        if (orientation.equals(TableAttributes.Orientation.VERTICAL)) {
 
-        ArrayList<String> data = new ArrayList<>();
-        for (int i = 0; i < table.size(); i++) {
-            data.add(table.get(i).get(col));
+            for (int i = rowNum; i < table.size(); i++) {
+                data.add(table.get(i).get(colNum));
+            }
+            return data;
+
+        } else {
+            List<String> row = this.table.get(rowNum);
+            return row.subList(colNum, row.size());
         }
-        return data;
     }
 
     public String toString(){

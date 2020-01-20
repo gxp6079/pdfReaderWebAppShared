@@ -64,7 +64,7 @@ public class postMultipleInstancesRoute implements Route {
         LOG.info("Adding table to hashmap");
         tables.put(tableAttributes.tableId, curr);
 
-        TemplateReader.createTable(currentTemplate, tableAttributes.START, tableAttributes.END, tableAttributes.contains, tableId, instance);
+        TemplateReader.createTable(currentTemplate, tableAttributes.START, tableAttributes.END, tableAttributes.contains, tableId, instance, tableAttributes.orientation);
 
         token.setTableAttributes(null);
         return 1;
