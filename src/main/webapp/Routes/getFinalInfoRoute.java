@@ -39,44 +39,43 @@ public class getFinalInfoRoute implements Route {
     @Override
     public Object handle(Request request, Response response) throws Exception {
 
-
-        Token token = Application.getToken(request.queryParams("token"), request);
-
-        Template currentTemplate = token.getTemplate();
-        String institutionId = token.getInstitutionId();
-
-        LOG.info("Checking if exists template type: " + currentTemplate.getType());
         try {
+            Token token = Application.getToken(request.queryParams("token"), request);
+
+            Template currentTemplate = token.getTemplate();
+            String institutionId = token.getInstitutionId();
+
+            LOG.info("Checking if exists template type: " + currentTemplate.getType());
+
             if (!TemplateReader.checkIfExists(currentTemplate.getType(), institutionId)) {
                 TemplateReader.addToDB(currentTemplate, institutionId);
                 LOG.info("Adding template \'" + currentTemplate.getType() + "\' to database");
-            } else if(TemplateReader.checkIfExists(currentTemplate.getType(), institutionId)) {
+            } else if (TemplateReader.checkIfExists(currentTemplate.getType(), institutionId)) {
                 LOG.info("Template: " + currentTemplate.getType() + " already exists in database");
+            } else {
+                response.status(404);
+                response.body("Not all required fields were set");
             }
-            else {
-                return "Not all required fields were set";
-            }
-        } catch (Exception e) {
-            LOG.info("Exception thrown when adding template to database");
-        }
 
-        try {
+
             String encoding = "UTF-8";
             LOG.info("Using encoding: " + encoding);
-            response.raw().setContentType("text/html; charset="+encoding);
+            response.raw().setContentType("text/html; charset=" + encoding);
             response.raw().setCharacterEncoding(encoding);
 
             LOG.info("Reading data from template: " + currentTemplate.getType());
-            TemplateReader.readExistingTemplate(token.getCsvPath(),
+            String content = TemplateReader.readExistingTemplate(token.getCsvPath(),
                     currentTemplate.getType(),
-                    institutionId,
-                    response.raw().getWriter(), LOG);
-        } catch (Exception e) {
-            LOG.info("Exception thrown when reading template" + e.getMessage());
-        }
+                    institutionId, LOG);
 
-        fh.flush();
-        LOG.info("GetFinalInfo completed successfully");
+
+            fh.flush();
+            LOG.info("GetFinalInfo completed successfully");
+            return content;
+        }
+        catch (Exception e) {
+            LOG.info("Exception thrown " + e.getMessage());
+        }
         return 1;
     }
 }

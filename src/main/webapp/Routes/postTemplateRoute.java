@@ -139,15 +139,17 @@ public class postTemplateRoute implements Route {
         token.setPdfPath(path);
         LOG.info("new PDF path set");
 
+        String content = "No info";
+
         if (TemplateReader.checkIfExists(templateType, token.getInstitutionId())) {
             LOG.info("template exists");
             try {
-                TemplateReader.readExistingTemplate(csvFilePath, templateType, token.getInstitutionId(),response.raw().getWriter(), LOG);
+                content = TemplateReader.readExistingTemplate(csvFilePath, templateType, token.getInstitutionId(), LOG);
             }
             catch (Exception e){
                 LOG.info("Error reading existing template:" +  e.getMessage());
             }
-            return 1;
+            return content;
         }
 
 

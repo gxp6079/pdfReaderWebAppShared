@@ -49,6 +49,8 @@ public class Application implements SparkApplication {
 
     public static final String UPDATE_FIELD = "/updateField";
 
+    public static final String GET_DATA_FROM_TABLE = "/getDataFromTable";
+
     public static void main(String[] args) {
 
         createDatabaseTable();
@@ -94,6 +96,8 @@ public class Application implements SparkApplication {
         get(AVAILABLE_TEMP, new getAvailableTemplatesRoute());
 
         post(UPDATE_FIELD, new postUpdateFieldRoute());
+
+        get(GET_DATA_FROM_TABLE, new getDataFromTable());
     }
 
     public static void createDatabaseTable() {

@@ -1,5 +1,6 @@
 package main.webapp.Model;
 
+import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 
 import java.io.*;
@@ -23,7 +24,7 @@ public class TemplateReader {
     }
 
 
-    public static void readExistingTemplate(String filename, String templateName, String institutionId, PrintWriter out, Logger LOG) throws IOException {
+    public static String readExistingTemplate(String filename, String templateName, String institutionId, Logger LOG) throws IOException {
         Template template = null;
         try {
             template = readFromDB(templateName, institutionId, LOG);
@@ -31,25 +32,26 @@ public class TemplateReader {
 
             List<String[]> list = readAllLines(filename);
 
-            Map<Integer, Table> tables = new HashMap<>();
+            Map<String, Table> tables = new HashMap<>();
 
             TableFactory tableFactory = new TableFactory(list);
             for (TableAttributes ta : template.getTables()) {
                 tableFactory.initialize(ta.START, ta.END, ta.contains);
                 Table table = tableFactory.makeTable(ta.getOccurrence());
-                if (table != null) tables.put(table.hashCode(), table);
+                if (table != null) tables.put(ta.tableId, table);
             }
 
             /**
              * name of field to value
              */
-            Map<String, List<String>> values = new HashMap<>();
+            HashMap<String, List<String>> values = new HashMap<>();
 
             for (Field field : template.getFields().values()) {
+                LOG.info("Reading data for field: " + field.NAME);
                 Map<String, String> dictionary = field.getWordLUT();
                 List<String> value = field.getValue(tables.get(field.TABLE_ID));
-                if (dictionary.size() == 0) continue;
-                else {
+                LOG.info("Got " + value + "\nfrom table " + field.TABLE_ID + "\nwith header" + field.HEADER);
+                if(dictionary.size() != 0) {
                     ArrayList<String> data = new ArrayList<>(value);
                     for (int i = 0; i < data.size(); i++) {
                         String curr = data.get(i);
@@ -58,14 +60,21 @@ public class TemplateReader {
                     value = data;
                 }
                 values.put(field.NAME, value);
-                out.println(field.NAME + " :" + String.join(" | ", value));
+                LOG.info("added new field " + values);
             }
-            LOG.info("table info printing complete");
+
+            Gson gson = new Gson();
+
+            LOG.info("table info printing complete with values " + values + "and Json " + gson.toJson(values));
+            return gson.toJson(values);
         }
         catch (Exception e) {
-            e.printStackTrace();
-            LOG.info(e.getMessage());
+            StringWriter sw = new StringWriter();
+            PrintWriter pr = new PrintWriter(sw);
+            e.printStackTrace(pr);
+            LOG.info(sw.toString());
         }
+        return "";
     }
 
     public static HashMap<String, Table> getTables(Template template, TableFactory tableFactory, Logger LOG) throws IOException {
