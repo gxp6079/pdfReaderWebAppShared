@@ -35,7 +35,7 @@ public class TemplateReader {
             Map<String, Table> tables = new HashMap<>();
 
             TableFactory tableFactory = new TableFactory(list);
-            for (TableAttributes ta : template.getTables()) {
+            for (TableAttributes ta : template.getTables().values()) {
                 tableFactory.initialize(ta.START, ta.END, ta.contains);
                 Table table = tableFactory.makeTable(ta.getOccurrence());
                 if (table != null) tables.put(ta.tableId, table);
@@ -82,7 +82,7 @@ public class TemplateReader {
         LOG.info("getTables() method called in TemplateReader");
         HashMap<String, Table> tables = new HashMap<>();
 
-        for(TableAttributes attributes : template.getTables()){
+        for(TableAttributes attributes : template.getTables().values()){
             LOG.info("looking for table with start, end: " + attributes.START + ", " + attributes.END);
             tableFactory.initialize(attributes.START, attributes.END, attributes.contains);
             Table table = tableFactory.makeTable(attributes.getOccurrence());
@@ -91,6 +91,13 @@ public class TemplateReader {
         }
 
         return tables;
+    }
+
+    public static Table getTableWithId(String tableId, Template template, TableFactory tableFactory){
+        TableAttributes attributes = template.getTables().get(tableId);
+        tableFactory.initialize(attributes.START, attributes.END, attributes.contains);
+        Table table = tableFactory.makeTable(attributes.getOccurrence());
+        return table;
     }
 
     public static void printTables(HashMap<String, Table> tables, PrintWriter out, Logger LOG){

@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.util.logging.Logger;
 
 public class Template implements Serializable {
-    private List<TableAttributes> tables;
+    private HashMap<String, TableAttributes> tables;
     private HashMap<Integer, Field> fields;
     private String type;
 
@@ -16,7 +16,7 @@ public class Template implements Serializable {
     }
 
     public Template(String type) {
-        this.tables = new ArrayList<>();
+        this.tables = new HashMap<>();
         this.fields = new HashMap<>();
         this.type = type;
     }
@@ -30,7 +30,7 @@ public class Template implements Serializable {
     }
 
     public void addTable(TableAttributes tableAttributes) {
-        this.tables.add(tableAttributes);
+        this.tables.put(tableAttributes.tableId, tableAttributes);
     }
 
     public void addField(Field field){
@@ -41,7 +41,7 @@ public class Template implements Serializable {
         return this.fields;
     }
 
-    public List<TableAttributes> getTables() {
+    public HashMap<String, TableAttributes> getTables() {
         return tables;
     }
 
