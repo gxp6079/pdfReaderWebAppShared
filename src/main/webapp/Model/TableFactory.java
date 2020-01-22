@@ -107,6 +107,7 @@ public class TableFactory {
             LOG.info("Comparing: " + start + " and " + list.get(row)[leftCol].trim().toLowerCase());
             if ((contains && list.get(row)[leftCol].trim().toLowerCase().contains(start)) ||
                     (!contains && list.get(row)[leftCol].trim().toLowerCase().equals(start))) {
+                LOG.info("start found");
                 Integer[] loc = new Integer[2];
                 loc[0] = row;
                 loc[1] = leftCol;
@@ -127,7 +128,10 @@ public class TableFactory {
         try {
             while (row < list.size()) {
                 String val = list.get(row)[col].trim().toLowerCase();
-                if ((contains && val.contains(end)) || (!contains && val.equals(end))) return true;
+                if ((contains && val.contains(end)) || (!contains && val.equals(end))){
+                    LOG.info("end found");
+                    return true;
+                }
                 if (col == list.get(row).length - 1) {
                     col = 0;
                     tableRow.clear();

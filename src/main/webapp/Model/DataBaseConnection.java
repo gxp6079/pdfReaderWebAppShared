@@ -18,9 +18,9 @@ public abstract class DataBaseConnection {
     private static final String SQL_OBJECT_EXISTS = "SELECT EXISTS (SELECT template_object FROM TEMPLATES WHERE (template_type = ? AND institution_id = ?)) ";
     private static final String SQL_UPDATE_TEMPLATE = "UPDATE TEMPLATES SET template_object = ? WHERE (template_type = ? AND institution_id = ?)";
 
-    public static long serializeJavaObjectToDB(Connection connection,
-                                               Template objectToSerialize, String institutionId) throws SQLException {
+    public static long serializeJavaObjectToDB(Template objectToSerialize, String institutionId) throws SQLException {
 
+        Connection connection = makeConnection();
         PreparedStatement pstmt = connection
                 .prepareStatement(SQL_SERIALIZE_OBJECT);
 
@@ -38,12 +38,17 @@ public abstract class DataBaseConnection {
         pstmt.close();
         System.out.println("Java object serialized to database. Object: "
                 + objectToSerialize);
+        connection.close();
         return 1;
     }
 
 
-    public static Boolean checkIfObjExists(Connection connection, String type, String institutionId) throws SQLException {
+    public static Boolean checkIfObjExists(String type, String institutionId) throws SQLException {
+        Connection connection = makeConnection();
+        return checkIfObjExists(connection, type, institutionId);
+    }
 
+    private static Boolean checkIfObjExists(Connection connection, String type, String institutionId) throws SQLException {
         PreparedStatement pstmt = connection
                 .prepareStatement(SQL_OBJECT_EXISTS);
         pstmt.setString(1, type);
@@ -55,7 +60,7 @@ public abstract class DataBaseConnection {
 
         rs.close();
         pstmt.close();
-
+        connection.close();
         if (buf[0] == 49) {
             return true;
         }
@@ -70,10 +75,10 @@ public abstract class DataBaseConnection {
      * @throws IOException
      * @throws ClassNotFoundException
      */
-    public static Object deSerializeJavaObjectFromDB(Connection connection,
-                                                     String type,
+    public static Object deSerializeJavaObjectFromDB(String type,
                                                      String institutionId) throws SQLException, IOException,
             ClassNotFoundException {
+        Connection connection = makeConnection();
         ResultSet rs = null;
         PreparedStatement pstmt = null;
         ObjectInputStream objectIn = null;
@@ -97,11 +102,12 @@ public abstract class DataBaseConnection {
 
         rs.close();
         pstmt.close();
+        connection.close();
 
         return deSerializedObject;
     }
 
-    public static Connection makeConnection() throws SQLException {
+    private static Connection makeConnection() throws SQLException {
         Connection connection = null;
 
         String driver = "com.mysql.cj.jdbc.Driver";
@@ -120,8 +126,9 @@ public abstract class DataBaseConnection {
         return connection;
     }
 
-    public static ArrayList<String> getTemplatesForInstitution(Connection connection, String institutionId, Logger LOG) throws SQLException, IOException,
+    public static ArrayList<String> getTemplatesForInstitution(String institutionId, Logger LOG) throws SQLException, IOException,
             ClassNotFoundException {
+        Connection connection = makeConnection();
         ResultSet rs = null;
         PreparedStatement pstmt = null;
         ObjectInputStream objectIn = null;
@@ -146,12 +153,13 @@ public abstract class DataBaseConnection {
 
         rs.close();
         pstmt.close();
-
+        connection.close();
         return listOfTemplates;
     }
 
-    public static void updateTemplateInDB(Connection connection, String institutionId, Template updateTo)throws SQLException, IOException,
+    public static void updateTemplateInDB(String institutionId, Template updateTo)throws SQLException, IOException,
             ClassNotFoundException {
+        Connection connection = makeConnection();
         ResultSet rs = null;
         PreparedStatement pstmt = null;
 
@@ -162,5 +170,6 @@ public abstract class DataBaseConnection {
         pstmt.setString(3, institutionId);
         pstmt.executeUpdate();
         pstmt.close();
+        connection.close();
     }
 }

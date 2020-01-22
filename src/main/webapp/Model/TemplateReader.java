@@ -19,8 +19,7 @@ public class TemplateReader {
      * @throws SQLException thrown if cannot access database
      */
     public static boolean checkIfExists(String templateName, String institutionId) throws SQLException {
-        Connection connection = DataBaseConnection.makeConnection();
-        return DataBaseConnection.checkIfObjExists(connection, templateName, institutionId);
+        return DataBaseConnection.checkIfObjExists(templateName, institutionId);
     }
 
 
@@ -124,10 +123,8 @@ public class TemplateReader {
 
 
     public static Template readFromDB(String type, String institutionId, Logger LOG) throws SQLException, IOException {
-        Connection connection = DataBaseConnection.makeConnection();
         try {
-            return (Template) DataBaseConnection.deSerializeJavaObjectFromDB(
-                    connection, type, institutionId);
+            return (Template) DataBaseConnection.deSerializeJavaObjectFromDB(type, institutionId);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             LOG.info(e.getMessage());
@@ -136,10 +133,8 @@ public class TemplateReader {
     }
 
     public static ArrayList<String> getTemplatesForInstitutionFromDB(String institutionId, Logger LOG) throws SQLException, IOException {
-        Connection connection = DataBaseConnection.makeConnection();
         try {
-            return DataBaseConnection.getTemplatesForInstitution(
-                    connection, institutionId, LOG);
+            return DataBaseConnection.getTemplatesForInstitution(institutionId, LOG);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -147,8 +142,7 @@ public class TemplateReader {
     }
 
     public static void addToDB(Template template, String institutionId) throws SQLException {
-        Connection connection = DataBaseConnection.makeConnection();
-        DataBaseConnection.serializeJavaObjectToDB(connection, template, institutionId);
+        DataBaseConnection.serializeJavaObjectToDB(template, institutionId);
     }
 
 
