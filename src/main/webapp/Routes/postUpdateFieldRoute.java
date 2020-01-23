@@ -21,20 +21,20 @@ public class postUpdateFieldRoute implements Route {
     public Object handle(Request request, Response response) throws Exception {
 
         String key = request.queryParams("key");
+        String tableId = request.queryParams("tableId");
         String value = request.queryParams("value");
         String id = request.queryParams("token");
         String fieldName = request.queryParams("fieldName");
 
         Token token = Application.getToken(id, request);
 
-        Field toUpdate = token.getTemplate().getFields().get(fieldName);
+        Field toUpdate = token.getTemplate().getFields().get(fieldName.hashCode() + tableId.hashCode());
 
         toUpdate.addTranslation(key, value);
 
-        Connection connection = DataBaseConnection.makeConnection();
         try {
-            if(DataBaseConnection.checkIfObjExists(connection, token.getTemplate().getType(), token.getInstitutionId())) {
-                DataBaseConnection.updateTemplateInDB(connection, token.getInstitutionId(), token.getTemplate());
+            if(DataBaseConnection.checkIfObjExists(token.getTemplate().getType(), token.getInstitutionId())) {
+                DataBaseConnection.updateTemplateInDB(token.getInstitutionId(), token.getTemplate());
             }
         }
         catch (Exception e){

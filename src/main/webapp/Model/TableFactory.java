@@ -62,7 +62,7 @@ public class TableFactory {
 
     private List<Integer[]> locations;
 
-    private static final Logger LOG = Logger.getLogger(postStartEndRoute.class.getName());
+    private static final Logger LOG = Logger.getLogger(TableFactory.class.getName());
     public static FileHandler fh;
 
 
@@ -110,20 +110,20 @@ public class TableFactory {
         List<Integer[]> locations = new ArrayList<>();
         int leftCol = 0;
         int row = 0;
-        while(row < list.size()){
+        while(row < list.size()) {
             LOG.info("Comparing: " + start + " and " + list.get(row)[leftCol].trim().toLowerCase());
-            if((contains && list.get(row)[leftCol].trim().toLowerCase().contains(start)) ||
-                    (!contains && list.get(row)[leftCol].trim().toLowerCase().equals(start))){
+            if ((contains && list.get(row)[leftCol].trim().toLowerCase().contains(start)) ||
+                    (!contains && list.get(row)[leftCol].trim().toLowerCase().equals(start))) {
+                LOG.info("start found");
                 Integer[] loc = new Integer[2];
                 loc[0] = row;
                 loc[1] = leftCol;
                 if (hasEnd(end, row, contains)) locations.add(loc);
             }
-            if(leftCol == list.get(row).length - 1){
+            if (leftCol == list.get(row).length - 1) {
                 leftCol = 0;
-                row ++;
-            }
-            else{
+                row++;
+            } else {
                 leftCol++;
             }
         }
@@ -135,7 +135,10 @@ public class TableFactory {
         try {
             while (row < list.size()) {
                 String val = list.get(row)[col].trim().toLowerCase();
-                if ((contains && val.contains(end)) || (!contains && val.equals(end))) return true;
+                if ((contains && val.contains(end)) || (!contains && val.equals(end))){
+                    LOG.info("end found");
+                    return true;
+                }
                 if (col == list.get(row).length - 1) {
                     col = 0;
                     tableRow.clear();

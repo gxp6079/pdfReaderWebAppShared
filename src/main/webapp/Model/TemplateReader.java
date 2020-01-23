@@ -1,5 +1,6 @@
 package main.webapp.Model;
 
+import com.google.gson.Gson;
 import com.opencsv.CSVReader;
 
 import java.io.*;
@@ -18,12 +19,11 @@ public class TemplateReader {
      * @throws SQLException thrown if cannot access database
      */
     public static boolean checkIfExists(String templateName, String institutionId) throws SQLException {
-        Connection connection = DataBaseConnection.makeConnection();
-        return DataBaseConnection.checkIfObjExists(connection, templateName, institutionId);
+        return DataBaseConnection.checkIfObjExists(templateName, institutionId);
     }
 
 
-    public static void readExistingTemplate(String filename, String templateName, String institutionId, PrintWriter out, Logger LOG) throws IOException {
+    public static String readExistingTemplate(String filename, String templateName, String institutionId, Logger LOG) throws IOException {
         Template template = null;
         try {
             template = readFromDB(templateName, institutionId, LOG);
@@ -31,25 +31,26 @@ public class TemplateReader {
 
             List<String[]> list = readAllLines(filename);
 
-            Map<Integer, Table> tables = new HashMap<>();
+            Map<String, Table> tables = new HashMap<>();
 
             TableFactory tableFactory = new TableFactory(list);
-            for (TableAttributes ta : template.getTables()) {
+            for (TableAttributes ta : template.getTables().values()) {
                 tableFactory.initialize(ta.START, ta.END, ta.contains, ta.orientation);
                 Table table = tableFactory.makeTable(ta.getOccurrence());
-                if (table != null) tables.put(table.hashCode(), table);
+                if (table != null) tables.put(ta.tableId, table);
             }
 
             /**
              * name of field to value
              */
-            Map<String, List<String>> values = new HashMap<>();
+            HashMap<String, List<String>> values = new HashMap<>();
 
             for (Field field : template.getFields().values()) {
+                LOG.info("Reading data for field: " + field.NAME);
                 Map<String, String> dictionary = field.getWordLUT();
                 List<String> value = field.getValue(tables.get(field.TABLE_ID));
-                if (dictionary.size() == 0) continue;
-                else {
+                LOG.info("Got " + value + "\nfrom table " + field.TABLE_ID + "\nwith header" + field.HEADER);
+                if(dictionary.size() != 0) {
                     ArrayList<String> data = new ArrayList<>(value);
                     for (int i = 0; i < data.size(); i++) {
                         String curr = data.get(i);
@@ -58,22 +59,29 @@ public class TemplateReader {
                     value = data;
                 }
                 values.put(field.NAME, value);
-                out.println(field.NAME + " :" + String.join(" | ", value));
+                LOG.info("added new field " + values);
             }
-            LOG.info("table info printing complete");
+
+            Gson gson = new Gson();
+
+            LOG.info("table info printing complete with values " + values + "and Json " + gson.toJson(values));
+            return gson.toJson(values);
         }
         catch (Exception e) {
-            e.printStackTrace();
-            LOG.info(e.getMessage());
+            StringWriter sw = new StringWriter();
+            PrintWriter pr = new PrintWriter(sw);
+            e.printStackTrace(pr);
+            LOG.info(sw.toString());
         }
+        return "";
     }
 
-    public static HashMap<String, Table> getTables(Template template, TableFactory tableFactory, PrintWriter out, Logger LOG) throws IOException {
+    public static HashMap<String, Table> getTables(Template template, TableFactory tableFactory, Logger LOG) throws IOException {
 
         LOG.info("getTables() method called in TemplateReader");
         HashMap<String, Table> tables = new HashMap<>();
 
-        for(TableAttributes attributes : template.getTables()){
+        for(TableAttributes attributes : template.getTables().values()){
             LOG.info("looking for table with start, end: " + attributes.START + ", " + attributes.END);
             tableFactory.initialize(attributes.START, attributes.END, attributes.contains, attributes.orientation);
             Table table = tableFactory.makeTable(attributes.getOccurrence());
@@ -81,6 +89,17 @@ public class TemplateReader {
             tables.put(attributes.tableId, table);
         }
 
+        return tables;
+    }
+
+    public static Table getTableWithId(String tableId, Template template, TableFactory tableFactory){
+        TableAttributes attributes = template.getTables().get(tableId);
+        tableFactory.initialize(attributes.START, attributes.END, attributes.contains, attributes.orientation);
+        Table table = tableFactory.makeTable(attributes.getOccurrence());
+        return table;
+    }
+
+    public static void printTables(HashMap<String, Table> tables, PrintWriter out, Logger LOG){
         LOG.info("Printing tables");
         for(String id : tables.keySet()){
             out.println(id);
@@ -92,8 +111,6 @@ public class TemplateReader {
             }
             out.println("\n");
         }
-
-        return tables;
     }
 
     public static void createTable(Template template, String start, String end, Boolean contains, String tableId, int instance, TableAttributes.Orientation orientation){
@@ -106,10 +123,8 @@ public class TemplateReader {
 
 
     public static Template readFromDB(String type, String institutionId, Logger LOG) throws SQLException, IOException {
-        Connection connection = DataBaseConnection.makeConnection();
         try {
-            return (Template) DataBaseConnection.deSerializeJavaObjectFromDB(
-                    connection, type, institutionId);
+            return (Template) DataBaseConnection.deSerializeJavaObjectFromDB(type, institutionId);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             LOG.info(e.getMessage());
@@ -118,10 +133,8 @@ public class TemplateReader {
     }
 
     public static ArrayList<String> getTemplatesForInstitutionFromDB(String institutionId, Logger LOG) throws SQLException, IOException {
-        Connection connection = DataBaseConnection.makeConnection();
         try {
-            return DataBaseConnection.getTemplatesForInstitution(
-                    connection, institutionId, LOG);
+            return DataBaseConnection.getTemplatesForInstitution(institutionId, LOG);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -129,8 +142,7 @@ public class TemplateReader {
     }
 
     public static void addToDB(Template template, String institutionId) throws SQLException {
-        Connection connection = DataBaseConnection.makeConnection();
-        DataBaseConnection.serializeJavaObjectToDB(connection, template, institutionId);
+        DataBaseConnection.serializeJavaObjectToDB(template, institutionId);
     }
 
 
