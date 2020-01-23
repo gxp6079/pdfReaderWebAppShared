@@ -63,13 +63,16 @@ public class postStartEndRoute implements Route {
         if (factory.getNumLocations() > 1) {
             LOG.info("More than one instance of start and end found");
             TableAttributes tableAttributes = new TableAttributes(start, end, contains, tableId);
+
             token.setTableAttributes(tableAttributes);
 
             String message = "These starting locations were found:\n";
             int index = 0;
             while(index < factory.getNumLocations()){
+                LOG.info("found location " + factory.getLocations().get(index));
                 message += (index + 1)+ ". row: " + factory.getLocations().get(index)[0] + " column: "
                         + factory.getLocations().get(index)[1] + "\n";
+                LOG.info("message is now = " + message);
                 index++;
             }
             return message;

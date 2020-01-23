@@ -20,6 +20,7 @@ public class Token {
 
     public Token(String id) {
         this.id = id;
+        this.tableAttributes = new HashMap<>();
     }
 
     public TableAttributes getTableAttributes(String tableId) {
