@@ -62,7 +62,7 @@ public class postTableInfoRoute implements Route {
             return "table id not found";
         }
 
-        if (curr.getDataAt(value) == null) {
+        if (curr.getDataAt(value, LOG) == null) {
             response.status(400);
             LOG.info("Header \'" + value + "\' not found in table\nFailed to add to template");
             return "value not found in table";

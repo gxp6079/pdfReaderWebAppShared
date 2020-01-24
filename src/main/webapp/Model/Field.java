@@ -3,6 +3,7 @@ package main.webapp.Model;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Field implements Serializable {
     public final String NAME;
@@ -21,8 +22,8 @@ public class Field implements Serializable {
         return wordLUT;
     }
 
-    public List<String> getValue(Table table){
-        return table.getDataAt(HEADER);
+    public List<String> getValue(Table table, Logger LOG){
+        return table.getDataAt(HEADER, LOG);
     }
 
     public void addTranslation(String key, String value) {

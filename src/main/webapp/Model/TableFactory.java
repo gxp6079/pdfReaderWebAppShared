@@ -2,6 +2,8 @@ package main.webapp.Model;
 
 import main.webapp.Routes.postStartEndRoute;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.FileHandler;
@@ -9,6 +11,12 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 public class TableFactory {
+
+    /**
+     * right most column of the table
+     */
+    private int rightBoundCol;
+
     /**
      * left most column of the table
      */
@@ -74,6 +82,7 @@ public class TableFactory {
         this.contains = contains = true;
         this.row = 0;
         this.col = 0;
+        this.rightBoundCol = -1;
 
         this.start = start = "";
         this.end = end = "";
@@ -107,11 +116,12 @@ public class TableFactory {
     }
 
     public List<Integer[]> getLocation(String start, String end, Boolean contains){
+        LOG.info("getLocation");
         List<Integer[]> locations = new ArrayList<>();
         int leftCol = 0;
         int row = 0;
         while(row < list.size()) {
-            LOG.info("Comparing: " + start + " and " + list.get(row)[leftCol].trim().toLowerCase());
+            //LOG.info("Comparing: " + start + " and " + list.get(row)[leftCol].trim().toLowerCase());
             if ((contains && list.get(row)[leftCol].trim().toLowerCase().contains(start)) ||
                     (!contains && list.get(row)[leftCol].trim().toLowerCase().equals(start))) {
                 LOG.info("start found");
@@ -131,17 +141,17 @@ public class TableFactory {
     }
 
     private boolean hasEnd(String end, int row, Boolean contains) {
+        LOG.info(String.format("hasEnd called (%s, %d)", end, row));
         int col = 0;
         try {
             while (row < list.size()) {
                 String val = list.get(row)[col].trim().toLowerCase();
                 if ((contains && val.contains(end)) || (!contains && val.equals(end))){
-                    LOG.info("end found");
+                    LOG.info(String.format("End found at row, col: %s, %s", row, col));
                     return true;
                 }
                 if (col == list.get(row).length - 1) {
                     col = 0;
-                    tableRow.clear();
                     row++;
                     if (row >= list.size()) {
                         // END string not found
@@ -155,6 +165,45 @@ public class TableFactory {
             return false;
         }
         return false;
+    }
+
+
+    private void getEndCol(String end, int startRow, int startCol) {
+
+        LOG.info("Getting ending column");
+        int currRow = startRow;
+        int currCol = startCol;
+
+
+        try {
+            while (currRow < list.size()) {
+                String val = list.get(currRow)[currCol].trim().toLowerCase();
+                if ((contains && val.contains(end)) || (!contains && val.equals(end))) {
+                    LOG.info(String.format("End col found at: %d", currCol));
+                    this.rightBoundCol = currCol;
+                    return;
+                }
+                if (currCol == list.get(row).length - 1) {
+                    currCol = 0;
+                    currRow++;
+                    if (currRow >= list.size()) {
+                        // END string not found
+                        LOG.info("End not found");
+                        return;
+                    }
+                } else {
+                    currCol++;
+                }
+            }
+        } catch (Exception e) {
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            LOG.info(sw.toString());
+        }
+        LOG.info("End not found");
+        return;
+
     }
 
     public int getNumLocations() {
@@ -185,6 +234,7 @@ public class TableFactory {
             LOG.info("Only one possible location exists");
             LOG.info("Using location row, leftCol: " + this.row + ", " + this.leftCol);
         }
+        getEndCol(this.end, this.row, this.leftCol);
         Table table = new Table(start, end, orientation);
         LOG.info("Table object created with start, end: " + start + ", " + end);
 
@@ -212,7 +262,7 @@ public class TableFactory {
                 }
             }
 
-            if(col == list.get(row).length - 1) {
+            if(col >= this.rightBoundCol) {
                 if(!list.get(row)[leftCol].equals("") && !tableRow.get(0).contains("...")) {
                     table.addRow(tableRow);
                     LOG.info("Adding row of size: " + tableRow.size());

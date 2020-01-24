@@ -51,7 +51,7 @@ public class getDataFromTable implements Route {
             if(field.TABLE_ID.equals(tableId)) {
                 LOG.info("Reading data for field: " + field.NAME);
                 Map<String, String> dictionary = field.getWordLUT();
-                List<String> value = field.getValue(table);
+                List<String> value = field.getValue(table, LOG);
                 LOG.info("Got " + value + "\nfrom table " + field.TABLE_ID + "\nwith header" + field.HEADER);
                 if (dictionary.size() != 0) {
                     ArrayList<String> data = new ArrayList<>(value);

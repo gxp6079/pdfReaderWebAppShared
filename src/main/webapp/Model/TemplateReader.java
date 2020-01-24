@@ -48,7 +48,7 @@ public class TemplateReader {
             for (Field field : template.getFields().values()) {
                 LOG.info("Reading data for field: " + field.NAME);
                 Map<String, String> dictionary = field.getWordLUT();
-                List<String> value = field.getValue(tables.get(field.TABLE_ID));
+                List<String> value = field.getValue(tables.get(field.TABLE_ID), LOG);
                 LOG.info("Got " + value + "\nfrom table " + field.TABLE_ID + "\nwith header" + field.HEADER);
                 if(dictionary.size() != 0) {
                     ArrayList<String> data = new ArrayList<>(value);
@@ -135,7 +135,7 @@ public class TemplateReader {
     public static ArrayList<String> getTemplatesForInstitutionFromDB(String institutionId, Logger LOG) throws SQLException, IOException {
         try {
             return DataBaseConnection.getTemplatesForInstitution(institutionId, LOG);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return null;

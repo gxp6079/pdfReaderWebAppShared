@@ -45,10 +45,6 @@ public abstract class DataBaseConnection {
 
     public static Boolean checkIfObjExists(String type, String institutionId) throws SQLException {
         Connection connection = makeConnection();
-        return checkIfObjExists(connection, type, institutionId);
-    }
-
-    private static Boolean checkIfObjExists(Connection connection, String type, String institutionId) throws SQLException {
         PreparedStatement pstmt = connection
                 .prepareStatement(SQL_OBJECT_EXISTS);
         pstmt.setString(1, type);
@@ -84,7 +80,7 @@ public abstract class DataBaseConnection {
         ObjectInputStream objectIn = null;
         Object deSerializedObject = null;
 
-        if (checkIfObjExists(connection, type, institutionId)) {
+        if (checkIfObjExists(type, institutionId)) {
             pstmt = connection
                     .prepareStatement(SQL_DESERIALIZE_OBJECT);
             pstmt.setString(1, type);
@@ -108,8 +104,6 @@ public abstract class DataBaseConnection {
     }
 
     private static Connection makeConnection() throws SQLException {
-        Connection connection = null;
-
         String driver = "com.mysql.cj.jdbc.Driver";
         String url = DATABASE_IP;
 
@@ -121,17 +115,15 @@ public abstract class DataBaseConnection {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        connection = DriverManager.getConnection(url, username, password);
+        Connection connection = DriverManager.getConnection(url, username, password);
 
         return connection;
     }
 
-    public static ArrayList<String> getTemplatesForInstitution(String institutionId, Logger LOG) throws SQLException, IOException,
-            ClassNotFoundException {
+    public static ArrayList<String> getTemplatesForInstitution(String institutionId, Logger LOG) throws SQLException {
         Connection connection = makeConnection();
         ResultSet rs = null;
         PreparedStatement pstmt = null;
-        ObjectInputStream objectIn = null;
         ArrayList<String> listOfTemplates = new ArrayList<>();
 
         pstmt = connection
@@ -157,10 +149,8 @@ public abstract class DataBaseConnection {
         return listOfTemplates;
     }
 
-    public static void updateTemplateInDB(String institutionId, Template updateTo)throws SQLException, IOException,
-            ClassNotFoundException {
+    public static void updateTemplateInDB(String institutionId, Template updateTo)throws SQLException {
         Connection connection = makeConnection();
-        ResultSet rs = null;
         PreparedStatement pstmt = null;
 
         pstmt = connection
