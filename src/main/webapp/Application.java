@@ -77,8 +77,6 @@ public class Application implements SparkApplication {
 
         get(FINAL_INFO, new getFinalInfoRoute());
 
-        get(MULTIPLE_INSTANCE_URL, new getMultipleInstancesRoute());
-
         get(TABLE_INFO_URL, new getTableInfoRoute());
 
         get(EXIT, new getUserExitRoute());

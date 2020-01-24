@@ -102,6 +102,6 @@ public class postStartEndRoute implements Route {
         LOG.info("TemplateReader.createTable called with templets <" + currentTemplate.getType() + "> and given start end");
         TemplateReader.createTable(currentTemplate, start, end, contains, tableId,1, orientation);
 
-        return tableId;
+        return 1;
     }
 }
