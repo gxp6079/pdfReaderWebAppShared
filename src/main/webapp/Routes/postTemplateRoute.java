@@ -144,7 +144,14 @@ public class postTemplateRoute implements Route {
         if (TemplateReader.checkIfExists(templateType, token.getInstitutionId())) {
             LOG.info("template exists");
             try {
-                content = TemplateReader.readExistingTemplate(csvFilePath, templateType, token.getInstitutionId(), LOG);
+                List<String[]> list = TemplateReader.readAllLines(token.getCsvPath());
+                TableFactory tableFactory = new TableFactory(list);
+                token.setTableFactory(tableFactory);
+
+                Template template = TemplateReader.readFromDB(templateType, token.getInstitutionId(), LOG);
+                token.setTemplate(template);
+
+                content = TemplateReader.readExistingTemplate(tableFactory, template, LOG);
             }
             catch (Exception e){
                 LOG.info("Error reading existing template:" +  e.getMessage());

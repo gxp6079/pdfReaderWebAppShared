@@ -1,6 +1,7 @@
 package main.webapp.Routes;
 
 import main.webapp.Application;
+import main.webapp.Model.TableFactory;
 import main.webapp.Model.Template;
 import main.webapp.Model.TemplateReader;
 import main.webapp.Model.Token;
@@ -8,6 +9,7 @@ import spark.Request;
 import spark.Response;
 import spark.Route;
 
+import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
@@ -58,9 +60,8 @@ public class getFinalInfoRoute implements Route {
             }
 
             LOG.info("Reading data from template: " + currentTemplate.getType());
-            String content = TemplateReader.readExistingTemplate(token.getCsvPath(),
-                    currentTemplate.getType(),
-                    institutionId, LOG);
+
+            String content = TemplateReader.readExistingTemplate(token.getTableFactory(), token.getTemplate(), LOG);
 
 
             fh.flush();

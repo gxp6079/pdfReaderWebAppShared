@@ -17,7 +17,7 @@ import java.util.logging.SimpleFormatter;
 
 public class getDataFromTable implements Route {
 
-    private static final Logger LOG = Logger.getLogger(postTemplateRoute.class.getName());
+    private static final Logger LOG = Logger.getLogger(getDataFromTable.class.getName());
     public static FileHandler fh;
 
     public getDataFromTable() {
@@ -40,15 +40,19 @@ public class getDataFromTable implements Route {
         String tokenString = request.queryParams("token");
 
         Token token = Application.getToken(tokenString, request);
+        LOG.info("Got token = " + token);
         Template template = token.getTemplate();
+        LOG.info("Got template = " + template);
 
-        Table table = TemplateReader.getTableWithId(tableId, template, token.getTableFactory());
+        LOG.info("Getting table, factory = " + token.getTableFactory());
+        Table table = TemplateReader.getTableWithId(tableId, template, token.getTableFactory(), LOG);
+        LOG.info("Got table = " + table);
         HashMap<String, List<String>> values = new HashMap<>();
 
         LOG.info("got tamplate " + template);
         for (Field field : template.getFields().values()) {
-            LOG.info("Comparing fieldTable: " + field.TABLE_ID +" and tableId: " + tableId);
-            if(field.TABLE_ID.equals(tableId)) {
+            LOG.info("Comparing fieldTable: " + field.TABLE_ID + " and tableId: " + tableId);
+            if (field.TABLE_ID.equals(tableId)) {
                 LOG.info("Reading data for field: " + field.NAME);
                 Map<String, String> dictionary = field.getWordLUT();
                 List<String> value = field.getValue(table, LOG);

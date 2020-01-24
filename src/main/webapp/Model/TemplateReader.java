@@ -23,17 +23,12 @@ public class TemplateReader {
     }
 
 
-    public static String readExistingTemplate(String filename, String templateName, String institutionId, Logger LOG) throws IOException {
-        Template template = null;
+    public static String readExistingTemplate(TableFactory tableFactory, Template template, Logger LOG) throws IOException {
         try {
-            template = readFromDB(templateName, institutionId, LOG);
             LOG.info("Template successfully retrieved");
-
-            List<String[]> list = readAllLines(filename);
 
             Map<String, Table> tables = new HashMap<>();
 
-            TableFactory tableFactory = new TableFactory(list);
             for (TableAttributes ta : template.getTables().values()) {
                 tableFactory.initialize(ta.START, ta.END, ta.contains, ta.orientation);
                 Table table = tableFactory.makeTable(ta.getOccurrence());
@@ -100,10 +95,15 @@ public class TemplateReader {
         return tables;
     }
 
-    public static Table getTableWithId(String tableId, Template template, TableFactory tableFactory){
+    public static Table getTableWithId(String tableId, Template template, TableFactory tableFactory, Logger LOG){
+        LOG.info("Available = " + template.getTables().keySet().toString() +
+                        "\n requested = "+ tableId);
         TableAttributes attributes = template.getTables().get(tableId);
+        LOG.info("Got attributes = " + attributes);
         tableFactory.initialize(attributes.START, attributes.END, attributes.contains, attributes.orientation);
+        LOG.info("Table initialized");
         Table table = tableFactory.makeTable(attributes.getOccurrence());
+        LOG.info("Made table = " + table);
         return table;
     }
 
