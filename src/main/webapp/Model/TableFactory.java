@@ -220,7 +220,7 @@ public class TableFactory {
             if(locations.size() == 0){
                 LOG.info("Failed to make table, no locations found for start, end :"  + start + ", " + end);
                 System.out.println("Start not found");
-                return new Table(start, end, orientation);
+                return new Table(start, end, orientation); //shouldn't we return null here
             }
             else{
                 this.row = locations.get(location - 1)[0];
@@ -385,7 +385,7 @@ public class TableFactory {
 
     private void initializeHeaders(Table table) {
         LOG.info("initialize header called");
-        for (this.col = this.leftCol; this.col < list.get(this.row).length; this.col++) {
+        for (this.col = this.leftCol; this.col < this.rightBoundCol; this.col++) {
             String val = list.get(this.row)[this.col].trim().toLowerCase();
             if (!val.equals("")) {
                 Header header = new Header(this.row, this.col, val);

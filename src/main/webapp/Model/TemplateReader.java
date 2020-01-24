@@ -43,9 +43,17 @@ public class TemplateReader {
             /**
              * name of field to value
              */
-            HashMap<String, List<String>> values = new HashMap<>();
+            HashMap<String, HashMap<String, List<String>>> values = new HashMap<>();
 
             for (Field field : template.getFields().values()) {
+                HashMap<String, List<String>> valuesInTable;
+                if(values.containsKey(field.TABLE_ID)){
+                    valuesInTable = values.get(field.TABLE_ID);
+                }
+                else{
+                    valuesInTable = new HashMap<>();
+                    values.put(field.TABLE_ID, valuesInTable);
+                }
                 LOG.info("Reading data for field: " + field.NAME);
                 Map<String, String> dictionary = field.getWordLUT();
                 List<String> value = field.getValue(tables.get(field.TABLE_ID), LOG);
@@ -58,8 +66,8 @@ public class TemplateReader {
                     }
                     value = data;
                 }
-                values.put(field.NAME, value);
-                LOG.info("added new field " + values);
+                valuesInTable.put(field.NAME, value);
+                LOG.info("added new field " + valuesInTable);
             }
 
             Gson gson = new Gson();

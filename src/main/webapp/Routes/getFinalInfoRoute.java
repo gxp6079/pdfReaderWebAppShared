@@ -57,12 +57,6 @@ public class getFinalInfoRoute implements Route {
                 response.body("Not all required fields were set");
             }
 
-
-            String encoding = "UTF-8";
-            LOG.info("Using encoding: " + encoding);
-            response.raw().setContentType("text/html; charset=" + encoding);
-            response.raw().setCharacterEncoding(encoding);
-
             LOG.info("Reading data from template: " + currentTemplate.getType());
             String content = TemplateReader.readExistingTemplate(token.getCsvPath(),
                     currentTemplate.getType(),

@@ -114,15 +114,20 @@ public class Table {
                 for (colNum = 0; colNum < row.size(); colNum++) {
                     String currentVal = row.get(colNum).trim().toLowerCase();
                     if (currentVal.contains(value)) {
+                        found = true;
                         LOG.info(String.format("Found value at row, col: %d, %d", rowNum, colNum));
                         break;
                     }
+                }
+                if(found){
+                    break;
                 }
             }
         }
 
         if (orientation.equals(TableAttributes.Orientation.VERTICAL)) {
             LOG.info("Treating table as vertical");
+            LOG.info("Current row = " + rowNum + " max row = " + table.size());
             for (int i = rowNum; i < table.size(); i++) {
                 LOG.info("Adding " + table.get(i).get(colNum));
                 data.add(table.get(i).get(colNum));
