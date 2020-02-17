@@ -94,7 +94,7 @@ public class Table {
                 if (subHeaders.containsKey(colNum)) data.add(subHeaders.get(colNum).getValue());
                 break;
             }
-            if (h.hasChildren()) {
+            else if (h.hasChildren()) {
                 for (Header child : h.getChildren()) {
                     if (child.getValue().toLowerCase().contains(value)) {
                         colNum = child.getCol();
@@ -129,6 +129,7 @@ public class Table {
             LOG.info("Treating table as vertical");
             LOG.info("Current row = " + rowNum + " max row = " + table.size());
             for (int i = rowNum; i < table.size(); i++) {
+                if(colNum >= table.get(i).size()) continue;
                 LOG.info("Adding " + table.get(i).get(colNum));
                 data.add(table.get(i).get(colNum));
             }

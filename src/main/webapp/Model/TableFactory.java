@@ -216,7 +216,7 @@ public class TableFactory {
                 }
             }
 
-            if(col >= list.get(row).length) {
+            if(col >= list.get(row).length-1) {
                 if(!list.get(row)[leftCol].equals("") && !tableRow.get(0).contains("...")) {
                     table.addRow(tableRow);
                     LOG.info("Adding row of size: " + tableRow.size());
