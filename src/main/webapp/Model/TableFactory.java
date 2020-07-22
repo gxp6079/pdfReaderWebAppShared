@@ -1,6 +1,7 @@
 package main.webapp.Model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -195,6 +196,7 @@ public class TableFactory {
         initializeHeaders(table);
         LOG.info("Table initialized");
 
+        LOG.info("TABLE ROW BEFORE CLEAR " + tableRow);
         tableRow.clear();
 
         this.row++;
@@ -207,21 +209,24 @@ public class TableFactory {
                 if(col == leftCol && !val.equals("")) finishedHead = true;
                 checkEntry(table, finishedHead);
                 if (!val.equals("")) {
+                    LOG.info("BEFORE ADD " + tableRow);
                     tableRow.add(val);
-                    LOG.info("Adding '" + val + "' to table row");
-                }
-                else if (val.equals("") && dataIndexes.contains(col)) {
+                    LOG.info("Adding '" + val + "' to table row -- new size: " + tableRow);
+                } else if (val.equals("") && dataIndexes.contains(col)) {
+                    LOG.info("BEFORE ADD " + tableRow);
                     tableRow.add(val);
-                    LOG.info("Adding '" + val + "' to table row");
+                    LOG.info("Adding '" + val + "' to table row -- new size: " + tableRow);
                 }
             }
 
             if(col >= list.get(row).length-1) {
-                if(!list.get(row)[leftCol].equals("") && !tableRow.get(0).contains("...")) {
+                LOG.info("" + (tableRow.size()));
+                if(tableRow.size() >= 1 && !tableRow.get(0).contains("...")) {
                     table.addRow(tableRow);
                     LOG.info("Adding row of size: " + tableRow.size());
                 }
                 col = 0;
+                LOG.info("TABLE ROW BEFORE CLEAR " + tableRow);
                 tableRow.clear();
                 this.row++;
                 if (row >= list.size() && !((contains && val.contains(end)) || (!contains && val.equals(end)))) {
@@ -339,15 +344,28 @@ public class TableFactory {
 
     private void initializeHeaders(Table table) {
         LOG.info("initialize header called");
-        for (this.col = this.leftCol; this.col < list.get(this.row).length; this.col++) {
-            String val = list.get(this.row)[this.col].trim().toLowerCase();
-            if (!val.equals("")) {
-                Header header = new Header(this.row, this.col, val);
-                table.addHeader(header);
-                LOG.info("header added " + header.toString());
-                if (!val.contains("...")) this.tableRow.add(val);
-                dataIndexes.add(col);
+
+        while(true){
+            List<Header> currentHeaders = new ArrayList<>();
+            for (this.col = this.leftCol; this.col < list.get(this.row).length; this.col++) {
+                String val = list.get(this.row)[this.col].trim().toLowerCase();
+                if (!val.equals("")) {
+                    Header header = new Header(this.row, this.col, val);
+                    currentHeaders.add(header);
+                    LOG.info("header added " + header.toString());
+                    if (!val.contains("...")) this.tableRow.add(val);
+                    dataIndexes.add(col);
+                }
             }
+
+            /*
+            check if it found enough headers to actually add them to the table
+            otherwise, increment the row and try again
+             */
+            if (currentHeaders.size() > 1) {
+                for (Header h : currentHeaders) table.addHeader(h);
+                break;
+            } else row++;
         }
     }
 
